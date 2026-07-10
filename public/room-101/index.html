@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dynasty Stadium · Room 101 · Tier 01 · Light Scoreboard</title>
+<style>
+:root{
+  --page-cap:1200px; --content-cap:1040px; --panel-cap:920px;
+  --bg:#05070a; --bg-2:#0a0e13; --panel:#0d1319; --panel-2:#111922;
+  --line:#1b2530; --line-2:#223040;
+  --green:#39ff88; --green-dim:#1f7d47; --green-glow:rgba(57,255,136,.55); --green-soft:rgba(57,255,136,.12);
+  --txt:#e6f2ea; --txt-2:#8ea397; --txt-3:#566b60; --amber:#ffcc55; --red:#ff5566;
+  --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),transparent 60%),
+             radial-gradient(900px 500px at 90% 110%,rgba(57,255,136,.04),transparent 55%),var(--bg);
+  color:var(--txt);font-family:var(--mono);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;padding:28px 20px 80px;
+}
+.topstrip{max-width:var(--content-cap);margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.roomchip{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--txt-2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--panel)}
+.roomchip b{color:var(--green);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green-glow)}
+.statebadge{font-size:11px;letter-spacing:.24em;text-transform:uppercase;padding:7px 14px;border-radius:999px;border:1px solid var(--green-dim);color:var(--green);background:var(--green-soft)}
+
+.board{max-width:var(--panel-cap);margin:0 auto;border:1px solid var(--line-2);border-radius:20px;
+  background:linear-gradient(180deg,var(--panel),var(--bg-2));
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 120px -40px rgba(0,0,0,.9),0 0 60px -20px var(--green-glow);
+  overflow:hidden;position:relative}
+.board::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(57,255,136,.05),transparent 22%)}
+
+.hdr{padding:30px 34px 8px}
+.hdr-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel-2)}
+.field{padding:16px 18px;background:var(--panel)}
+.field .k{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--txt-3);margin-bottom:7px}
+.field .v{font-size:16px;color:var(--txt);font-weight:600}
+
+.hero{padding:34px 34px 30px;text-align:center}
+.hero .tag{display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--green);border:1px solid var(--green-dim);border-radius:999px;padding:8px 18px;background:var(--green-soft);margin-bottom:22px}
+.hero .num{font-size:clamp(56px,12vw,108px);font-weight:800;line-height:.92;color:var(--green);letter-spacing:-.02em;text-shadow:0 0 28px var(--green-glow),0 0 60px var(--green-glow);font-variant-numeric:tabular-nums}
+.hero .sub{margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-2)}
+
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent);margin:6px 34px}
+.expiry{margin:8px 34px 0;padding:16px 20px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-2);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.expiry .lead{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-3)}
+.expiry .cd{font-size:20px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+.expiry .cd.warn{color:var(--red)}
+
+.cta{padding:26px 34px 34px}
+.cta .big{width:100%;display:block;text-align:center;font-family:var(--mono);font-size:17px;font-weight:700;letter-spacing:.04em;color:#04120a;background:linear-gradient(180deg,#4dffa0,var(--green));border:0;border-radius:14px;padding:20px;cursor:pointer;box-shadow:0 0 34px -6px var(--green-glow);transition:.15s}
+.cta .big:hover{transform:translateY(-1px);box-shadow:0 0 44px -4px var(--green-glow)}
+.cta .fine{text-align:center;margin-top:14px;font-size:11px;color:var(--txt-3);letter-spacing:.08em}
+
+/* wire panel (revealed after CTA) */
+.wire{display:none;padding:0 34px 34px}
+.wire.show{display:block}
+.wire .box{border:1px solid var(--green-dim);border-radius:14px;background:var(--green-soft);padding:24px}
+.wire h3{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+.wire dl{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-size:14px}
+.wire dt{color:var(--txt-3);letter-spacing:.08em}
+.wire dd{color:var(--txt);font-weight:600}
+.wire .note{margin-top:18px;font-size:12px;color:var(--txt-2);line-height:1.7}
+
+/* exception state */
+.exception{display:none;padding:0 34px 34px}
+.exception.show{display:block}
+.exception .box{border:1px solid #4a3f20;border-radius:14px;background:rgba(255,204,85,.06);padding:26px;text-align:center}
+.exception .ico{font-size:26px;margin-bottom:12px}
+.exception .msg{font-size:17px;color:var(--amber);font-weight:600;line-height:1.6}
+.exception .sub{margin-top:12px;font-size:12px;color:var(--txt-2);letter-spacing:.06em}
+
+.meta{max-width:var(--panel-cap);margin:18px auto 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+@media (max-width:640px){.hdr-fields{grid-template-columns:1fr}.wire dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topstrip">
+  <span class="roomchip"><span class="dot"></span> DYNASTY STADIUM · <b>ROOM 101 · TIER 01</b></span>
+  <span class="statebadge" id="stateBadge">LIGHT · LIT</span>
+</div>
+
+<div class="board" id="board">
+  <!-- SHARED HEADER -->
+  <div class="hdr">
+    <div class="hdr-fields">
+      <div class="field"><div class="k">Company</div><div class="v" id="fCompany">—</div></div>
+      <div class="field"><div class="k">Insurance Carrier</div><div class="v" id="fCarrier">—</div></div>
+      <div class="field"><div class="k">Renewal Date</div><div class="v" id="fRenewal">—</div></div>
+    </div>
+  </div>
+  <!-- WASTE BOX HERO -->
+  <div class="hero">
+    <span class="tag">ANNUAL WASTE IDENTIFIED · $100,000+</span>
+    <div class="num" id="fWaste">$0</div>
+    <div class="sub">Recoverable annual group-health plan waste</div>
+  </div>
+
+  <!-- LIGHT teaser -->
+  <div id="lightBlock">
+    <div class="rule"></div>
+    <div class="expiry">
+      <span class="lead">Light board — teaser access</span>
+      <span class="cd" id="lightCd">This board expires in 30 days.</span>
+    </div>
+    <div class="cta">
+      <button class="big" id="unlockBtn" onclick="unlock()">Unlock the Full Scoreboard — $10,000 to start.</button>
+      <div class="fine">One flat fee opens the 12-month board. Then you only pay in lockstep with validated savings.</div>
+    </div>
+  </div>
+
+  <!-- Frost wire panel -->
+  <div class="wire" id="wireBlock">
+    <div class="box">
+      <h3>◇ Frost Bank Wire — $10,000 to start</h3>
+      <dl>
+        <dt>Beneficiary</dt><dd>Dynasty Holdings LLC</dd>
+        <dt>Bank</dt><dd>Frost Bank</dd>
+        <dt>Routing / Account</dt><dd id="wireAcct">Provided on the wire instructions page</dd>
+        <dt>Reference</dt><dd id="wireRef">—</dd>
+      </dl>
+      <div class="note">
+        Send the wire, then we confirm receipt. Your Full Scoreboard lights the moment payment clears and your first
+        monthly billing statement runs through the engine. Questions? Victoria has your file.
+      </div>
+    </div>
+  </div>
+
+  <!-- HITL exception -->
+  <div class="exception" id="exceptionBlock">
+    <div class="box">
+      <div class="ico">◇</div>
+      <div class="msg">We designed a human-in-the-loop for moments like this.<br>You'll hear from us within 24 hours.</div>
+      <div class="sub" id="exceptionReason"></div>
+    </div>
+  </div>
+</div>
+
+<div class="meta panel-cap">
+  <span id="metaClient">CLIENT: —</span>
+  <span id="metaTier">TIER 01 · TRUTH ROOM</span>
+  <span id="metaState">STATE: LIGHT</span>
+</div>
+
+<script>
+/* Room 101 Light board — production. Reads/writes the Dynasty Scoreboard Worker.
+   CID is passed via ?cid= (issued when the Tier-0 renewal upload created the record). */
+const API = "https://stadium.dynastyplays.com/api";   // Worker base
+const CID = new URLSearchParams(location.search).get("cid") || "DP-2026-0714";
+const FMT = n => "$" + Math.round(n).toLocaleString("en-US");
+
+async function load(){
+  let d;
+  try{
+    const r = await fetch(`${API}/board/${CID}`);
+    d = await r.json();
+    if(!d.ok) throw new Error(d.error||"load failed");
+  }catch(e){
+    // graceful offline fixture so the room still renders if the Worker is unreachable
+    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
+          renewalDate:"2026-11-01", annualWaste:175000, status:"light", light:{daysLeft:30} };
+  }
+  render(d);
+}
+
+function render(d){
+  document.getElementById("fCompany").textContent = d.company||"—";
+  document.getElementById("fCarrier").textContent = d.carrier||"—";
+  document.getElementById("fRenewal").textContent = d.renewalDate
+    ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
+  document.getElementById("fWaste").textContent = FMT(d.annualWaste||0);
+  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
+
+  const light = document.getElementById("lightBlock");
+  const wire  = document.getElementById("wireBlock");
+  const exc   = document.getElementById("exceptionBlock");
+  const badge = document.getElementById("stateBadge");
+  const metaState = document.getElementById("metaState");
+  light.style.display="none"; wire.classList.remove("show"); exc.classList.remove("show");
+
+  if(d.status==="exception"){
+    exc.classList.add("show");
+    document.getElementById("exceptionReason").textContent = d.exception?.reason || "";
+    badge.textContent="HITL · 24-HOUR HOLD"; metaState.textContent="STATE: EXCEPTION";
+    return;
+  }
+  if(d.status==="full" || d.status==="gray"){
+    // already paid — send them to the Full board
+    location.href = `/board/?cid=${d.cid}`;
+    return;
+  }
+  if(d.status==="awaiting_wire"){
+    wire.classList.add("show");
+    document.getElementById("wireRef").textContent = "DYN-" + d.cid;
+    badge.textContent="LIGHT · WIRE PENDING"; metaState.textContent="STATE: AWAITING WIRE";
+    return;
+  }
+  if(d.status==="awaiting_statement"){
+    // payment confirmed — Full board handles the upload step
+    location.href = `/board/?cid=${d.cid}`;
+    return;
+  }
+
+  // default LIGHT
+  light.style.display="";
+  const dl = d.light?.daysLeft ?? 30;
+  const cd = document.getElementById("lightCd");
+  if(dl>0){ cd.textContent = `This board expires in ${dl} day${dl===1?"":"s"}.`; cd.className = "cd"+(dl<=7?" warn":""); }
+  else { cd.textContent = "This board has expired."; cd.className="cd warn"; }
+  badge.textContent="LIGHT · LIT"; metaState.textContent="STATE: LIGHT";
+}
+
+async function unlock(){
+  const btn = document.getElementById("unlockBtn");
+  btn.disabled=true; btn.textContent="Preparing your wire instructions…";
+  try{
+    const r = await fetch(`${API}/wire/${CID}`, {method:"POST"});
+    const d = await r.json();
+    if(!d.ok) throw new Error(d.error);
+    // reveal wire panel
+    document.getElementById("lightBlock").style.display="none";
+    document.getElementById("wireBlock").classList.add("show");
+    document.getElementById("wireRef").textContent = "DYN-" + CID;
+    document.getElementById("stateBadge").textContent="LIGHT · WIRE PENDING";
+    document.getElementById("metaState").textContent="STATE: AWAITING WIRE";
+  }catch(e){
+    btn.disabled=false; btn.textContent="Unlock the Full Scoreboard — $10,000 to start.";
+    alert("Could not reach the wire desk. Victoria will follow up.");
+  }
+}
+
+load();
+</script>
+</body>
+</html>
