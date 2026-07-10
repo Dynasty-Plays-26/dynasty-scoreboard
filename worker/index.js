@@ -128,22 +128,190 @@ async function boardPayload(env, cid) {
 }
 
 // ---- ENGINE (auto-run, no approval) ----
-// Parses the uploaded billing statement and returns validated savings for the month.
-// PRODUCTION: replace parseStatement() with the real Kairos parser.
-// On any failure it THROWS -> caller drops client into HITL exception.
+// Parses the uploaded billing statement and returns validated monthly savings.
+// CONTRACT: return a positive integer (validated monthly premium reduction) on success,
+// or THROW on any problem -> caller drops the client into the 24-hour HITL exception.
+// This keeps a bad/unreadable statement from ever lighting the board with a wrong number.
+//
+// v0 parser: pulls text out of the uploaded PDF, finds the current-period premium
+// total, compares it to the client's stored baseline premium, and derives the realized
+// monthly reduction. A sanity band guards against plausible-but-wrong figures.
+// Hand-off: swap extractText()/findPremiumTotal() for the Kairos carrier-format parser;
+// the throw->HITL contract below must be preserved.
+
+const SANITY_BAND = 0.15; // realized reduction must land within +/-15% of expected
+
 async function runEngine(env, cid, r2key, monthIdx) {
   const c = await getClient(env, cid);
+  if (!c) throw new Error("client record not found");
   const obj = await env.R2.get(r2key);
   if (!obj) throw new Error("statement blob missing in R2");
 
-  // --- parseStatement stub: validates the monthly reduction against the file ---
-  // Real impl: extract premium lines, compare to baseline, compute delta.
-  // Here we validate the expected monthly reduction (annual/12).
-  const bytes = obj.size || 0;
-  if (bytes < 1) throw new Error("empty statement — cannot validate");
-  const monthly = monthlyReduction(c.annual_waste);
-  // A real parser could return a partial number; stub returns full monthly reduction.
-  return Math.round(monthly);
+  const buf = new Uint8Array(await obj.arrayBuffer());
+  if (buf.byteLength < 1024) throw new Error("statement too small to be a real billing PDF");
+
+  const contentType = (obj.httpMetadata && obj.httpMetadata.contentType) || "";
+  const looksPdf = buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46; // %PDF
+  if (!looksPdf && !/pdf/i.test(contentType)) throw new Error("uploaded file is not a PDF billing statement");
+
+  const text = await extractText(buf);
+  if (!text || text.replace(/\s/g, "").length < 40) {
+    throw new Error("could not extract readable text (scanned/encrypted PDF -> needs OCR)");
+  }
+
+  // Confirm this statement belongs to the plan: carrier or company must appear.
+  const hay = text.toLowerCase();
+  const carrierHit = c.carrier && hay.includes(c.carrier.toLowerCase().split(" ")[0]);
+  const companyHit = c.company && hay.includes(c.company.toLowerCase().split(" ")[0]);
+  if (!carrierHit && !companyHit) {
+    throw new Error("statement does not reference the client carrier or company");
+  }
+
+  const currentPremium = findPremiumTotal(text);
+  if (currentPremium == null) throw new Error("no premium/amount-due total found on statement");
+
+  // Baseline: the pre-optimization monthly premium the plan started at.
+  // baseline_monthly_premium is seeded on the client record at renewal intake.
+  const baseline = Number(c.baseline_monthly_premium) || 0;
+  if (baseline <= 0) throw new Error("no baseline monthly premium on record to compare against");
+
+  const realized = baseline - currentPremium;
+  if (realized <= 0) throw new Error(`no reduction detected (current ${currentPremium} >= baseline ${baseline})`);
+
+  // Sanity band: realized must be near the expected monthly reduction (annual waste / 12).
+  const expected = monthlyReduction(c.annual_waste);
+  const lo = expected * (1 - SANITY_BAND), hi = expected * (1 + SANITY_BAND);
+  if (realized < lo || realized > hi) {
+    throw new Error(`realized reduction ${Math.round(realized)} outside sanity band [${Math.round(lo)}, ${Math.round(hi)}] for expected ${Math.round(expected)}`);
+  }
+
+  return Math.round(realized);
+}
+
+// PDF text extraction. Decompresses FlateDecode content streams (the common case)
+// via DecompressionStream, then pulls text from Tj/TJ show operators. Falls back to
+// reading uncompressed streams directly. Returns "" when nothing readable is found
+// (scanned/encrypted PDFs), which runEngine treats as a HITL trigger.
+async function extractText(bytes) {
+  const latin = new TextDecoder("latin1").decode(bytes);
+  let corpus = "";
+
+  // Walk every `stream ... endstream` block. Inflate FlateDecode; keep raw otherwise.
+  const streamRe = /stream\r?\n/g;
+  let sm;
+  while ((sm = streamRe.exec(latin)) !== null) {
+    const start = sm.index + sm[0].length;
+    const end = latin.indexOf("endstream", start);
+    if (end < 0) continue;
+    let raw = bytes.subarray(start, end);
+    // Inspect the dictionary preceding this stream for its filter chain.
+    const dictHead = latin.slice(Math.max(0, sm.index - 260), sm.index);
+    try {
+      // Filters apply in order; ASCII85/ASCIIHex first, then Flate.
+      if (/ASCII85Decode/.test(dictHead)) raw = ascii85Decode(raw);
+      else if (/ASCIIHexDecode/.test(dictHead)) raw = asciiHexDecode(raw);
+      if (/FlateDecode/.test(dictHead)) corpus += await inflate(raw) + " ";
+      else corpus += new TextDecoder("latin1").decode(raw) + " ";
+    } catch (_) { /* skip unreadable stream */ }
+  }
+  if (!corpus) corpus = latin; // no stream markers -> scan whole file
+
+  // Pull text out of show operators in the (now decompressed) content.
+  let out = "";
+  const showRe = /\((?:\\.|[^\\()])*\)\s*Tj|\[(?:[^\]]*)\]\s*TJ/g;
+  let m;
+  while ((m = showRe.exec(corpus)) !== null) {
+    const strRe = /\(((?:\\.|[^\\()])*)\)/g;
+    let s;
+    while ((s = strRe.exec(m[0])) !== null) {
+      out += s[1].replace(/\\([()\\])/g, "$1").replace(/\\[nr]/g, " ") + " ";
+    }
+  }
+  // Fallback: any parenthesized literal in the decompressed corpus.
+  if (out.replace(/\s/g, "").length < 40) {
+    const litRe = /\(((?:\\.|[^\\()]){2,})\)/g;
+    let l;
+    while ((l = litRe.exec(corpus)) !== null) out += l[1].replace(/\\([()\\])/g, "$1") + " ";
+  }
+  return out;
+}
+
+// ASCII85 decode (PDF variant: whitespace ignored, 'z' -> 4 zero bytes, ~> terminator).
+function ascii85Decode(u8) {
+  const s = new TextDecoder("latin1").decode(u8);
+  const out = [];
+  let tuple = 0, count = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === "~") break;
+    if (/\s/.test(ch)) continue;
+    if (ch === "z" && count === 0) { out.push(0, 0, 0, 0); continue; }
+    const v = ch.charCodeAt(0) - 33;
+    if (v < 0 || v > 84) continue;
+    tuple = tuple * 85 + v; count++;
+    if (count === 5) {
+      out.push((tuple >>> 24) & 255, (tuple >>> 16) & 255, (tuple >>> 8) & 255, tuple & 255);
+      tuple = 0; count = 0;
+    }
+  }
+  if (count > 0) {
+    for (let k = count; k < 5; k++) tuple = tuple * 85 + 84;
+    const bytesOut = count - 1;
+    const b = [(tuple >>> 24) & 255, (tuple >>> 16) & 255, (tuple >>> 8) & 255, tuple & 255];
+    for (let k = 0; k < bytesOut; k++) out.push(b[k]);
+  }
+  return new Uint8Array(out);
+}
+
+// ASCIIHex decode (PDF: hex pairs, whitespace ignored, > terminator).
+function asciiHexDecode(u8) {
+  const s = new TextDecoder("latin1").decode(u8).replace(/\s/g, "");
+  const hex = s.slice(0, s.indexOf(">") >= 0 ? s.indexOf(">") : s.length);
+  const padded = hex.length % 2 ? hex + "0" : hex;
+  const out = new Uint8Array(padded.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(padded.substr(i * 2, 2), 16);
+  return out;
+}
+
+// Inflate a zlib/deflate byte range using the runtime DecompressionStream.
+// Tries zlib ("deflate") first, then raw ("deflate-raw").
+async function inflate(u8) {
+  for (const fmt of ["deflate", "deflate-raw"]) {
+    try {
+      const ds = new DecompressionStream(fmt);
+      const stream = new Response(u8).body.pipeThrough(ds);
+      const out = await new Response(stream).arrayBuffer();
+      const txt = new TextDecoder("latin1").decode(new Uint8Array(out));
+      if (txt && txt.length) return txt;
+    } catch (_) { /* try next format */ }
+  }
+  throw new Error("inflate failed");
+}
+
+// Find the billing period's premium / amount-due total.
+// Prefers labeled lines; falls back to the largest currency figure on the page.
+function findPremiumTotal(text) {
+  const norm = text.replace(/\u00a0/g, " ");
+  const labels = [
+    /total\s+amount\s+due[^0-9$]*\$?\s*([0-9][0-9,]*\.?[0-9]{0,2})/i,
+    /total\s+premium[^0-9$]*\$?\s*([0-9][0-9,]*\.?[0-9]{0,2})/i,
+    /amount\s+due[^0-9$]*\$?\s*([0-9][0-9,]*\.?[0-9]{0,2})/i,
+    /current\s+charges[^0-9$]*\$?\s*([0-9][0-9,]*\.?[0-9]{0,2})/i,
+    /premium\s+total[^0-9$]*\$?\s*([0-9][0-9,]*\.?[0-9]{0,2})/i,
+  ];
+  for (const re of labels) {
+    const m = norm.match(re);
+    if (m) {
+      const v = Number(m[1].replace(/,/g, ""));
+      if (isFinite(v) && v > 0) return v;
+    }
+  }
+  // Fallback: largest $-amount that looks like a monthly premium (>= $1,000).
+  const nums = [...norm.matchAll(/\$\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{2})?|[0-9]{4,}(?:\.[0-9]{2})?)/g)]
+    .map(x => Number(x[1].replace(/,/g, "")))
+    .filter(v => isFinite(v) && v >= 1000);
+  if (nums.length) return Math.max(...nums);
+  return null;
 }
 
 // ---- REPORT (HTML archived to R2, matches playbooks/<cid> pattern) ----

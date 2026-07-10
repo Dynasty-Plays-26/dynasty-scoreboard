@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS clients (
   carrier            TEXT,
   renewal_date       TEXT,                      -- ISO yyyy-mm-dd
   annual_waste       INTEGER DEFAULT 0,         -- dollars (whole)
+  baseline_monthly_premium INTEGER DEFAULT 0,   -- pre-optimization monthly premium; engine compares statements against this
 
   -- lifecycle / state machine:
   --   'light'      : Room 101 teaser board, 30-day clock

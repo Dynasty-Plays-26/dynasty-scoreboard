@@ -80,8 +80,18 @@ wrangler deploy
 # (routes /room-101/ and /board/).
 ```
 
-## What's stubbed for production hand-off
+## Engine parser (v0 — real, not a stub)
 
-- **`runEngine()`** in `worker/index.js` — statement parser is a stub that validates the expected monthly reduction. Drop in the real Kairos billing-statement parser here; keep the `throw → HITL exception` contract so parse failures always land in the 24-hour human loop.
+`runEngine()` in `worker/index.js` now does real work:
+1. Validates the upload is a PDF (`%PDF` magic / content-type) above a size floor.
+2. Extracts text — decodes `ASCII85Decode` / `ASCIIHexDecode` filters and inflates `FlateDecode` content streams via the runtime `DecompressionStream`.
+3. Confirms the statement references the client carrier or company.
+4. Finds the period premium / amount-due total (labeled lines, then largest-currency fallback).
+5. Computes realized monthly reduction against `clients.baseline_monthly_premium`.
+6. Applies a **±15% sanity band** vs. the expected monthly reduction (annual waste ÷ 12).
+
+Any failure at any step **throws → 24-hour HITL exception** — a bad or unreadable statement never lights the board with a wrong number. Verified against six cases (good / wrong-carrier / out-of-band / no-reduction / empty / non-PDF); the good statement validates to the exact expected figure.
+
+**Hand-off boundary:** scanned or image-only PDFs have no extractable text and route to HITL (needs OCR). Swap `extractText()`/`findPremiumTotal()` for the Kairos carrier-format parser as formats are onboarded — **keep the `throw → HITL` contract intact.**
 - **Frost wire account numbers** — served from `/rooms/101/wire`; the board shows the reference only.
 - Client records are seeded from the Tier-0 renewal upload that issues the `cid`.
