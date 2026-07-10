@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dynasty Scoreboard · Full · Room 303</title>
+<style>
+:root{
+  --page-cap:1200px; --content-cap:1040px; --panel-cap:920px;
+  --bg:#05070a; --bg-2:#0a0e13; --panel:#0d1319; --panel-2:#111922;
+  --line:#1b2530; --line-2:#223040;
+  --green:#39ff88; --green-dim:#1f7d47; --green-glow:rgba(57,255,136,.55); --green-soft:rgba(57,255,136,.12);
+  --txt:#e6f2ea; --txt-2:#8ea397; --txt-3:#566b60; --amber:#ffcc55; --red:#ff5566;
+  --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  --acc:var(--green); --acc-glow:var(--green-glow); --acc-soft:var(--green-soft); --acc-dim:var(--green-dim);
+}
+[data-graybox="true"]{--acc:#3a3a3a;--acc-glow:rgba(58,58,58,.5);--acc-soft:rgba(58,58,58,.18);--acc-dim:#2b2b2b;--txt:#7d857f;--txt-2:#5a615c}
+[data-graybox="true"] .board-inner{filter:grayscale(1) brightness(.82)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),transparent 60%),radial-gradient(900px 500px at 90% 110%,rgba(57,255,136,.04),transparent 55%),var(--bg);color:var(--txt);font-family:var(--mono);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:28px 20px 80px}
+.panel-cap{max-width:var(--panel-cap);margin:0 auto}
+.topstrip{max-width:var(--content-cap);margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.roomchip{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--txt-2);border:1px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--panel)}
+.roomchip b{color:var(--acc);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc-glow)}
+.statebadge{font-size:11px;letter-spacing:.24em;text-transform:uppercase;padding:7px 14px;border-radius:999px;border:1px solid var(--acc-dim);color:var(--acc);background:var(--acc-soft)}
+
+.board{max-width:var(--panel-cap);margin:0 auto;border:1px solid var(--line-2);border-radius:20px;background:linear-gradient(180deg,var(--panel),var(--bg-2));box-shadow:0 0 0 1px rgba(0,0,0,.4),0 40px 120px -40px rgba(0,0,0,.9),0 0 60px -20px var(--acc-glow);overflow:hidden;position:relative;transition:box-shadow .3s}
+.board::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(57,255,136,.05),transparent 22%)}
+[data-graybox="true"] .board{box-shadow:0 40px 120px -40px rgba(0,0,0,.9)}
+.board-inner{transition:filter .3s}
+
+.graybanner{display:none;align-items:center;gap:12px;background:repeating-linear-gradient(45deg,#14171b,#14171b 12px,#171a1f 12px,#171a1f 24px);border-bottom:1px solid #2a2f36;padding:14px 26px;color:#c9cfca;font-size:13px;letter-spacing:.03em}
+[data-graybox="true"] .graybanner{display:flex}
+.graybanner .warn{width:22px;height:22px;flex:0 0 auto;border-radius:6px;background:#2a2f36;display:grid;place-items:center;color:#ffcc55;font-weight:700}
+.graybanner b{color:#eef}
+
+.hdr{padding:30px 34px 8px}
+.hdr-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel-2)}
+.field{padding:16px 18px;background:var(--panel)}
+.field .k{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--txt-3);margin-bottom:7px}
+.field .v{font-size:16px;color:var(--txt);font-weight:600}
+
+.hero{padding:34px 34px 30px;text-align:center}
+.hero .tag{display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc-dim);border-radius:999px;padding:8px 18px;background:var(--acc-soft);margin-bottom:22px}
+.hero .num{font-size:clamp(56px,12vw,108px);font-weight:800;line-height:.92;color:var(--acc);letter-spacing:-.02em;text-shadow:0 0 28px var(--acc-glow),0 0 60px var(--acc-glow);font-variant-numeric:tabular-nums}
+.hero .sub{margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-2)}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent);margin:6px 34px}
+
+.run{padding:8px 34px 34px}
+.run-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 0 16px}
+.run-head .title{font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--txt-2)}
+.run-head .clock{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+.pbar-wrap{margin-bottom:8px}
+.pbar{position:relative;height:26px;border-radius:8px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line-2)}
+.pbar .fill{position:absolute;inset:0 auto 0 0;width:0%;background:linear-gradient(90deg,var(--acc-dim),var(--acc));box-shadow:0 0 18px var(--acc-glow);transition:width .5s ease}
+.pbar .trueup{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--amber);box-shadow:0 0 8px rgba(255,204,85,.6);left:100%}
+.pbar-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+.trueup-tag{color:var(--amber)}
+.totals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
+.tcard{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel)}
+.tcard .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px}
+.tcard .v{font-size:24px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums}
+.tcard.accent .v{color:var(--acc);text-shadow:0 0 16px var(--acc-glow)}
+.tcard .vsub{font-size:11px;color:var(--txt-3);margin-top:4px}
+.keep{margin:18px 0 24px;padding:16px 20px;border-radius:12px;border:1px solid var(--acc-dim);background:var(--acc-soft);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.keep .k90{font-size:22px;font-weight:800;color:var(--acc);text-shadow:0 0 14px var(--acc-glow)}
+.keep .k90 small{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--txt-2);text-shadow:none}
+.keep .feelogic{font-size:11px;color:var(--txt-2);line-height:1.7;text-align:right}
+.months{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mrow{display:grid;grid-template-columns:64px 1fr 120px 120px 96px;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.mrow:last-child{border-bottom:0}
+.mrow.head{background:var(--panel-2);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3)}
+.mrow .mo{color:var(--txt-2);font-weight:600}
+.mrow .amt{text-align:right;font-variant-numeric:tabular-nums}
+.mrow .amt.save{color:var(--acc)}
+.mrow .amt.fee{color:var(--txt-2)}
+.mrow .st{text-align:right}
+.pill{display:inline-block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line-2);color:var(--txt-3)}
+.pill.ok{color:var(--acc);border-color:var(--acc-dim);background:var(--acc-soft)}
+.pill.miss{color:var(--red);border-color:#4a2530;background:rgba(255,85,102,.08)}
+.pill.pend{color:var(--txt-3)}
+.pill.tu{color:var(--amber);border-color:#4a3f20;background:rgba(255,204,85,.08)}
+
+/* reports list */
+.reports{margin-top:22px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.reports .rh{background:var(--panel-2);padding:12px 16px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt-3)}
+.rrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid var(--line);font-size:13px}
+.rrow a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
+.rrow .rk{color:var(--txt-2)}
+.rrow .rq{color:var(--txt-3);font-size:11px;letter-spacing:.1em}
+
+.upload{margin-top:22px;padding:20px;border:1px dashed var(--line-2);border-radius:14px;background:var(--bg-2);text-align:center}
+.upload .u-lead{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-2);margin-bottom:6px}
+.upload .u-sub{font-size:12px;color:var(--txt-3);margin-bottom:16px}
+.upload input[type=file]{display:none}
+.upload .u-btn{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:#04120a;background:linear-gradient(180deg,#4dffa0,var(--green));border:0;border-radius:10px;padding:13px 22px;cursor:pointer;box-shadow:0 0 24px -8px var(--green-glow)}
+[data-graybox="true"] .upload{border-color:#3a3a3a}
+[data-graybox="true"] .upload .u-btn{filter:none;background:linear-gradient(180deg,#ffcc55,#e0a800);color:#1a1200}
+.upload .u-for{margin-top:12px;font-size:11px;color:var(--txt-3);letter-spacing:.1em}
+
+/* activation (post-payment, pre-first-statement) */
+.activate{padding:8px 34px 34px;display:none}
+.activate.show{display:block}
+.activate .box{border:1px solid var(--green-dim);border-radius:14px;background:var(--green-soft);padding:26px;text-align:center}
+.activate h3{font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.activate p{font-size:13px;color:var(--txt-2);margin-bottom:18px}
+
+/* exception */
+.exception{padding:8px 34px 34px;display:none}
+.exception.show{display:block}
+.exception .box{border:1px solid #4a3f20;border-radius:14px;background:rgba(255,204,85,.06);padding:26px;text-align:center}
+.exception .ico{font-size:26px;margin-bottom:12px}
+.exception .msg{font-size:17px;color:var(--amber);font-weight:600;line-height:1.6}
+.exception .sub{margin-top:12px;font-size:12px;color:var(--txt-2)}
+
+/* nudge modal */
+.modal-bg{position:fixed;inset:0;background:rgba(3,5,8,.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal-bg.show{display:flex}
+.modal{width:100%;max-width:480px;border:1px solid var(--line-2);border-radius:18px;background:linear-gradient(180deg,var(--panel),var(--bg-2));box-shadow:0 40px 120px -30px rgba(0,0,0,.9),0 0 60px -20px var(--green-glow);padding:32px 30px;text-align:center}
+.modal .m-chip{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--green);margin-bottom:16px}
+.modal h2{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:10px}
+.modal p{font-size:13px;color:var(--txt-2);margin-bottom:24px;line-height:1.6}
+.nudge-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nopt{font-family:var(--mono);font-size:14px;color:var(--txt);background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;padding:16px 12px;cursor:pointer;transition:.15s}
+.nopt:hover{border-color:var(--green-dim);color:var(--green)}
+.nopt .def{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-top:6px}
+.modal .m-fine{margin-top:20px;font-size:11px;color:var(--txt-3);line-height:1.6}
+
+.meta{max-width:var(--panel-cap);margin:18px auto 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
+@media (max-width:640px){.hdr-fields{grid-template-columns:1fr}.totals{grid-template-columns:1fr}.mrow{grid-template-columns:48px 1fr 96px}.mrow .fee-col,.mrow .st{display:none}.nudge-opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topstrip">
+  <span class="roomchip"><span class="dot"></span> DYNASTY STADIUM · <b>ROOM 303 · SCOREBOARD</b></span>
+  <span class="statebadge" id="stateBadge">FULL · LIT</span>
+</div>
+
+<div class="board" id="board" data-graybox="false">
+  <div class="board-inner">
+    <div class="graybanner"><span class="warn">!</span><span><b>Upload your monthly billing statement to relight your scoreboard.</b></span></div>
+
+    <div class="hdr">
+      <div class="hdr-fields">
+        <div class="field"><div class="k">Company</div><div class="v" id="fCompany">—</div></div>
+        <div class="field"><div class="k">Insurance Carrier</div><div class="v" id="fCarrier">—</div></div>
+        <div class="field"><div class="k">Renewal Date</div><div class="v" id="fRenewal">—</div></div>
+      </div>
+    </div>
+    <div class="hero">
+      <span class="tag">ANNUAL WASTE IDENTIFIED · $100,000+</span>
+      <div class="num" id="fWaste">$0</div>
+      <div class="sub">Recoverable annual group-health plan waste</div>
+    </div>
+
+    <!-- activation: payment confirmed, awaiting first statement -->
+    <div class="activate" id="activateBlock">
+      <div class="rule"></div>
+      <div class="box" style="margin-top:22px">
+        <h3>◇ Payment confirmed — activate your board</h3>
+        <p>Upload your first monthly medical plan billing statement. The engine validates your savings and lights the 12-month scoreboard.</p>
+        <label class="u-btn" for="firstFile" style="display:inline-block;color:#04120a;background:linear-gradient(180deg,#4dffa0,var(--green));border-radius:10px;padding:13px 22px;cursor:pointer">Upload first billing statement</label>
+        <input type="file" id="firstFile" style="display:none" onchange="onUpload(event)" />
+      </div>
+    </div>
+
+    <!-- exception -->
+    <div class="exception" id="exceptionBlock">
+      <div class="rule"></div>
+      <div class="box" style="margin-top:22px">
+        <div class="ico">◇</div>
+        <div class="msg">We designed a human-in-the-loop for moments like this.<br>You'll hear from us within 24 hours.</div>
+        <div class="sub" id="exceptionReason"></div>
+      </div>
+    </div>
+
+    <!-- FULL run -->
+    <div id="fullBlock" style="display:none">
+      <div class="rule"></div>
+      <div class="run">
+        <div class="run-head">
+          <span class="title">12-Month Savings Run</span>
+          <span class="clock" id="fullClock">Board lit</span>
+        </div>
+        <div class="pbar-wrap">
+          <div class="pbar"><div class="fill" id="pbarFill"></div><div class="trueup"></div></div>
+          <div class="pbar-labels"><span>Realized <span id="pbPct">0%</span> of annual target</span><span class="trueup-tag">▏Month-12 true-up</span></div>
+        </div>
+        <div class="totals">
+          <div class="tcard accent"><div class="k">Realized to date</div><div class="v" id="tRealized">$0</div><div class="vsub" id="tRealizedSub">0 of 12 months validated</div></div>
+          <div class="tcard"><div class="k">Dynasty fee to date</div><div class="v" id="tFee">$0</div><div class="vsub">Collected monthly · never a lump sum</div></div>
+          <div class="tcard"><div class="k">Monthly premium reduction</div><div class="v" id="tMonthly">$0</div><div class="vsub">Annual waste ÷ 12</div></div>
+        </div>
+        <div class="keep">
+          <div class="k90">You keep 90%<br><small>of every recovered dollar</small></div>
+          <div class="feelogic" id="feeLogic"></div>
+        </div>
+        <div class="months" id="monthsTable"></div>
+
+        <!-- report history -->
+        <div class="reports" id="reportsBlock" style="display:none">
+          <div class="rh">Report history · initial + quarterly (fiscal)</div>
+          <div id="reportsList"></div>
+        </div>
+
+        <div class="upload">
+          <div class="u-lead">Keep the board lit</div>
+          <div class="u-sub">Upload this month's medical plan billing statement to validate savings.</div>
+          <label class="u-btn" for="stmtFile">Upload billing statement</label>
+          <input type="file" id="stmtFile" onchange="onUpload(event)" />
+          <div class="u-for" id="uploadFor">Next required: —</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="meta panel-cap">
+  <span id="metaClient">CLIENT: —</span>
+  <span id="metaNudge">NUDGE: QUARTERLY</span>
+  <span id="metaFiscal">FISCAL Q START: —</span>
+</div>
+
+<div class="modal-bg" id="nudgeModal">
+  <div class="modal">
+    <div class="m-chip">◇ ONE QUESTION · ASKED ONCE</div>
+    <h2>How should we nudge you?</h2>
+    <p>We'll remind you to upload your monthly billing statement so the board stays lit. Pick a cadence — change it later by replying to any nudge.</p>
+    <div class="nudge-opts">
+      <button class="nopt" onclick="pickNudge('Quarterly')">Quarterly <span class="def">Default</span></button>
+      <button class="nopt" onclick="pickNudge('Monthly')">Monthly</button>
+      <button class="nopt" onclick="pickNudge('Weekly')">Weekly</button>
+      <button class="nopt" onclick="pickNudge('Daily')">Daily</button>
+    </div>
+    <div class="m-fine">Defaults to Quarterly if you close this. No on-board toggle after — reply to change.</div>
+  </div>
+</div>
+
+<script>
+const API = "https://stadium.dynastyplays.com/api";
+const CID = new URLSearchParams(location.search).get("cid") || "DP-2026-0714";
+const FMT = n => "$" + Math.round(n||0).toLocaleString("en-US");
+let STATE = null;
+
+async function load(){
+  let d;
+  try{
+    const r = await fetch(`${API}/board/${CID}`);
+    d = await r.json();
+    if(!d.ok) throw new Error(d.error||"load failed");
+  }catch(e){
+    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
+      renewalDate:"2026-11-01", annualWaste:175000, status:"full",
+      full:{ monthsLeft:12, currentMonth:3, monthly:14583, totalFee:17500, feePerMonth:1458, validated:2,
+             realizedToDate:29166, feeToDate:2916,
+             months:[{m:1,validated:true,savings:14583},{m:2,validated:true,savings:14583}] },
+      reports:[{kind:"initial",quarter:null,key:"reports/"+CID+"/2026-07-10-initial.html",at:"2026-07-10"}],
+      nudge:"Quarterly", nudgeAsked:false };
+  }
+  STATE = d; render(d);
+  if(!d.nudgeAsked && (d.status==="full"||d.status==="gray")) document.getElementById("nudgeModal").classList.add("show");
+}
+
+function render(d){
+  document.getElementById("fCompany").textContent = d.company||"—";
+  document.getElementById("fCarrier").textContent = d.carrier||"—";
+  document.getElementById("fRenewal").textContent = d.renewalDate ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
+  document.getElementById("fWaste").textContent = FMT(d.annualWaste);
+  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
+  document.getElementById("metaNudge").textContent = "NUDGE: " + (d.nudge||"Quarterly").toUpperCase();
+
+  const gray = d.status==="gray";
+  document.getElementById("board").setAttribute("data-graybox", gray?"true":"false");
+  const badge = document.getElementById("stateBadge");
+  const act = document.getElementById("activateBlock");
+  const exc = document.getElementById("exceptionBlock");
+  const full= document.getElementById("fullBlock");
+  act.classList.remove("show"); exc.classList.remove("show"); full.style.display="none";
+
+  if(d.status==="exception"){
+    exc.classList.add("show");
+    document.getElementById("exceptionReason").textContent = d.exception?.reason||"";
+    badge.textContent="HITL · 24-HOUR HOLD"; return;
+  }
+  if(d.status==="awaiting_statement"){
+    act.classList.add("show"); badge.textContent="ACTIVATE · UPLOAD STATEMENT"; return;
+  }
+  if(d.status==="light" || d.status==="awaiting_wire"){
+    location.href = `/room-101/?cid=${d.cid}`; return;
+  }
+
+  // FULL / GRAY
+  full.style.display=""; badge.textContent = gray ? "FULL · GRAY (STATEMENT DUE)" : "FULL · LIT";
+  const f = d.full||{};
+  document.getElementById("tMonthly").textContent  = FMT(f.monthly);
+  document.getElementById("tRealized").textContent = FMT(f.realizedToDate);
+  document.getElementById("tRealizedSub").textContent = `${f.validated||0} of 12 months validated`;
+  document.getElementById("tFee").textContent      = FMT(f.feeToDate);
+  const pct = Math.min(100,(f.realizedToDate/d.annualWaste)*100)||0;
+  document.getElementById("pbarFill").style.width = pct+"%";
+  document.getElementById("pbPct").textContent = Math.round(pct)+"%";
+  const above = Math.max(0, d.annualWaste-100000);
+  document.getElementById("feeLogic").innerHTML =
+    `$10,000 flat on first $100,000<br>+ 10% on ${FMT(above)} above $100,000 = ${FMT(above*0.10)}<br>Total fee ${FMT(f.totalFee)} · ${FMT(f.feePerMonth)}/mo in lockstep`;
+  document.getElementById("fullClock").textContent = `Board lit — ${f.monthsLeft} months remaining`;
+
+  // months table
+  const cm = f.currentMonth||1;
+  const validatedSet = new Set((f.months||[]).filter(m=>m.validated).map(m=>m.m));
+  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 90%)</span><span class="st">Doc</span></div>`;
+  for(let m=1;m<=12;m++){
+    const has = validatedSet.has(m);
+    const isTU = m===12;
+    let sp, dp, sv="—", fe="—";
+    if(has){ sp=`<span class="pill ok">Validated</span>`; dp=`<span class="pill ok">✓</span>`; sv=FMT(f.monthly); fe=FMT(f.feePerMonth); }
+    else if(m<cm){ sp=`<span class="pill miss">Missing</span>`; dp=`<span class="pill miss">✗</span>`; }
+    else if(m===cm){ sp=`<span class="pill pend">Due now</span>`; dp=`<span class="pill pend">•••</span>`; }
+    else { sp=`<span class="pill pend">Upcoming</span>`; dp=`<span class="pill pend">—</span>`; }
+    const tu = isTU?` <span class="pill tu">True-up</span>`:"";
+    html += `<div class="mrow"><span class="mo">M${m}</span><span>${sp}${tu}</span><span class="amt save">${sv}</span><span class="amt fee fee-col">${fe}</span><span class="st">${dp}</span></div>`;
+  }
+  document.getElementById("monthsTable").innerHTML = html;
+  document.getElementById("uploadFor").textContent = gray ? `Next required: Month ${cm} (overdue — board grayed)` : `Next required: Month ${cm}`;
+
+  // reports
+  const rl = document.getElementById("reportsList");
+  const rb = document.getElementById("reportsBlock");
+  if((d.reports||[]).length){
+    rb.style.display="";
+    rl.innerHTML = d.reports.map(r=>{
+      const file = r.key.split("/").pop();
+      const label = r.kind==="initial" ? "Initial Waste Report" : `Quarterly · ${r.quarter||""}`;
+      return `<div class="rrow"><span class="rk">${label}</span><span class="rq">${r.at}</span><a href="${API}/report/${d.cid}/${file}" target="_blank">Open / print</a></div>`;
+    }).join("");
+  } else rb.style.display="none";
+}
+
+async function onUpload(e){
+  const f = e.target.files[0]; if(!f) return;
+  const fd = new FormData(); fd.append("statement", f);
+  try{
+    const r = await fetch(`${API}/upload/${CID}`, {method:"POST", body:fd});
+    const d = await r.json();
+    e.target.value="";
+    await load();
+    if(d.status==="exception"){ /* board now shows HITL */ }
+  }catch(err){ alert("Upload failed — Victoria will follow up."); }
+}
+
+async function pickNudge(choice){
+  document.getElementById("nudgeModal").classList.remove("show");
+  try{ await fetch(`${API}/nudge/${CID}`, {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({choice})}); }catch(e){}
+  document.getElementById("metaNudge").textContent = "NUDGE: " + choice.toUpperCase();
+}
+document.getElementById("nudgeModal").addEventListener("click", e=>{
+  if(e.target.id==="nudgeModal") pickNudge("Quarterly");
+});
+
+load();
+</script>
+</body>
+</html>

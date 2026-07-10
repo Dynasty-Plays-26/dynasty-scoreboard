@@ -1,0 +1,24 @@
+name = "dynasty-scoreboard"
+main = "worker/index.js"
+compatibility_date = "2026-07-01"
+account_id = "0aaf25d2e2ffa7d18c01d096d4b9b843"   # Dynasty account
+
+# --- D1 ---
+[[d1_databases]]
+binding = "DB"
+database_name = "dynasty_scoreboard"
+database_id = "REPLACE_WITH_D1_ID"                 # wrangler d1 create dynasty_scoreboard
+
+# --- R2 (statement PDFs + archived HTML reports) ---
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "dynasty-scoreboard-blobs"           # wrangler r2 bucket create dynasty-scoreboard-blobs
+
+# --- Zoho ZeptoMail secrets (set via: wrangler secret put ZEPTO_TOKEN) ---
+# ZEPTO_TOKEN, ZEPTO_FROM set as secrets, not committed here.
+[vars]
+BCC = "don@dynastyplays.com"
+
+# --- CRON: sweep quarterly reports daily at 13:00 UTC (08:00 CDT) ---
+[triggers]
+crons = ["0 13 * * *"]
