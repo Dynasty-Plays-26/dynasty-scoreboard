@@ -523,12 +523,14 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 
 	  // note under reinvest
 	  const note = document.getElementById("reinvestNote");
-	  if(harvestChoice === "reinvest"){
-	    note.innerHTML = `<b>It funds the FUN.</b> Y${thisY.y} directs <b>${FMT(thisY.hwl)}</b> (${Math.round(thisY.pct*100)}%) into in-house white-label HWL. Back off 10 pts/yr to offset rate increases. Lane 01 fee stays separate. Recommendation, not seizure.`;
-	  } else if(harvestChoice === "pocket"){
-	    note.innerHTML = `<b>Pocket selected.</b> Recovered dollars stay with the business. Corridor ladder can still run on EO participation. Flip to <b>Reinvest</b> when you want waste to fund HWL.`;
-	  } else {
-	    note.innerHTML = `<b>Deploy selected.</b> Owner strategy outside HWL. Reinvest remains available any cycle after the board ticks.`;
+	  if(note){
+	    if(harvestChoice === "reinvest"){
+	      note.innerHTML = `<b>It funds the FUN.</b> <b>12-mo stage</b> to insurance anniversary · <b>3-year vision</b> (1-yr commitment). Y${thisY.y} redirects <b>${FMT(thisY.hwl)}</b> (${Math.round(thisY.hwlPctLabel*100)}% of recovered) into white-label HWL. Dynasty <b>20%</b> locked on recovered. Change is not short-term.`;
+	    } else if(harvestChoice === "pocket"){
+	      note.innerHTML = `<b>Pocket selected.</b> Recovered dollars stay with the business after Dynasty 20%. HWL stays dark. Flip to <b>Reinvest</b> when waste should fund the 3-year wellness vision.`;
+	    } else {
+	      note.innerHTML = `<b>Deploy selected.</b> Owner strategy outside HWL. Reinvest into the 3-year vision remains available any cycle after the board ticks.`;
+	    }
 	  }
 	}
 
