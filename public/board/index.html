@@ -91,7 +91,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	.corridor .oc.accent .ov{color:var(--acc);text-shadow:0 0 14px var(--acc-glow)}
 	.corridor .oc .os{font-size:11px;color:var(--txt-3);margin-top:4px;line-height:1.45}
 	.corridor .ytable{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
-	.corridor .yrow{display:grid;grid-template-columns:72px 1fr 1fr 1fr;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;align-items:center}
+	.corridor .yrow{display:grid;grid-template-columns:minmax(88px,1.1fr) 0.8fr 1fr 1fr;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;align-items:center}
 	.corridor .yrow:last-child{border-bottom:0}
 	.corridor .yrow.head{background:var(--bg-2);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-3)}
 	.corridor .yrow .amt{text-align:right;font-variant-numeric:tabular-nums}
@@ -486,8 +486,8 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  });
 	  // roster impact row
 	  lhtml += `<div class="yrow head"><span>Roster</span><span>Count</span><span class="amt">Y1 sit $ / mo</span><span class="amt hide-sm">Y3 sit $ / yr</span></div>`;
-	  lhtml += `<div class="yrow"><span>Participating</span><span>${inCount}</span><span class="amt hi">$0</span><span class="amt hide-sm">$0</span></div>`;
-	  lhtml += `<div class="yrow"><span>Sitting out</span><span>${outCount}</span><span class="amt">${FMT(sit[0]*outCount)}</span><span class="amt hide-sm">${FMT(y3AnnAllOut)}</span></div>`;
+	  lhtml += `<div class="yrow"><span>In program</span><span>${inCount}</span><span class="amt hi">$0</span><span class="amt hide-sm">$0</span></div>`;
+	  lhtml += `<div class="yrow"><span>Sit out</span><span>${outCount}</span><span class="amt">${FMT(sit[0]*outCount)}</span><span class="amt hide-sm">${FMT(y3AnnAllOut)}</span></div>`;
 	  document.getElementById("ladderTable").innerHTML = lhtml;
 
 	  // note under reinvest
