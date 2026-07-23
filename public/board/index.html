@@ -195,7 +195,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
       </div>
     </div>
     <div class="hero">
-      <span class="tag">ANNUAL WASTE IDENTIFIED · $100,000+</span>
+      <span class="tag" id="wasteTag">STAGED ANNUAL WASTE · GATE CLEARED</span>
       <div class="num" id="fWaste">$0</div>
       <div class="sub">Recoverable annual group-health plan waste</div>
     </div>
@@ -506,6 +506,8 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  document.getElementById("fCarrier").textContent = d.carrier||"—";
 	  document.getElementById("fRenewal").textContent = d.renewalDate ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
 	  document.getElementById("fWaste").textContent = FMT(d.annualWaste);
+	  const tag=document.getElementById("wasteTag");
+	  if(tag) tag.textContent = (d.annualWaste||0) >= 100000 ? "STAGED ANNUAL WASTE · $100K GATE CLEARED" : "STAGED ANNUAL WASTE";
 	  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
 	  document.getElementById("metaNudge").textContent = "NUDGE: " + (d.nudge||"Quarterly").toUpperCase();
 
