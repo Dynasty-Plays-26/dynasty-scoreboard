@@ -109,7 +109,8 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	.corridor .linkrow a{font-size:12px;color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
 	@media (max-width:720px){
 	  .corridor .cgrid{grid-template-columns:1fr 1fr}
-	  .corridor .outgrid,.corridor .harvest{grid-template-columns:1fr}
+	  .corridor .outgrid,.corridor .outgrid4,.corridor .harvest{grid-template-columns:1fr}
+	  .corridor .yrow5{grid-template-columns:48px 1fr 1fr !important}
 	  .corridor .yrow{grid-template-columns:56px 1fr 1fr}
 	  .corridor .yrow .hide-sm{display:none}
 	}
@@ -246,17 +247,17 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
         <!-- CORRIDOR CALCULATOR -->
         <div class="corridor" id="corridorCalc" aria-label="Employer Recovery Corridor calculator">
           <div class="ch">
-            <div class="ct">Employer Recovery Corridor · <b>Calculator</b></div>
+            <div class="ct">Employer Recovery Corridor · <b>3-yr vision</b></div>
             <div class="csub" id="corrModeLabel">Live · staged waste</div>
           </div>
           <div class="cbody">
             <div class="ctabs" role="tablist">
-              <button type="button" class="ctab on" data-panel="reinvest" id="tabReinvest">Reinvest glide</button>
+              <button type="button" class="ctab on" data-panel="reinvest" id="tabReinvest">Redirected dollars</button>
               <button type="button" class="ctab" data-panel="ladder" id="tabLadder">EO contribution ladder</button>
             </div>
 
             <div class="cgrid">
-              <label class="cin"><span>Staged annual waste</span>
+              <label class="cin"><span>Recovered / staged annual</span>
                 <input id="cWaste" type="number" min="0" step="1000" value="217000" />
               </label>
               <label class="cin"><span>EO monthly premium</span>
@@ -278,7 +279,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
                 </button>
                 <button type="button" class="hbtn on" data-choice="reinvest" id="hReinvest">
                   <span class="hk">Reinvest · funds the FUN</span>
-                  <span class="hb">White-label HWL from waste. Y1 50% · back off 10 pts/yr.</span>
+                  <span class="hb">3-year vision · 1-yr commitment. Y1 50% → Y2 40% → Y3 30%. Staged to anniversary.</span>
                 </button>
                 <button type="button" class="hbtn" data-choice="deploy" id="hDeploy">
                   <span class="hk">Deploy</span>
@@ -286,14 +287,19 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
                 </button>
               </div>
 
-              <div class="outgrid">
-                <div class="oc accent"><div class="ok">Y1 HWL pool (50%)</div><div class="ov" id="oY1">$0</div><div class="os">Aggressive install · Lead by Example + employee bonus</div></div>
-                <div class="oc"><div class="ok">This year → HWL</div><div class="ov" id="oThis">$0</div><div class="os" id="oThisSub">Year 1 · 50% of staged waste</div></div>
-                <div class="oc"><div class="ok">Stays with business</div><div class="ov" id="oKeep">$0</div><div class="os" id="oKeepSub">Not directed to HWL this year</div></div>
+              <div class="splitnote" id="splitNote">Recovered $ · staged 12 mo to insurance anniversary · 3-year vision</div>
+              <div class="outgrid outgrid4">
+                <div class="oc"><div class="ok">Annual recovered base</div><div class="ov" id="oBase">$0</div><div class="os" id="oBaseSub">Staged over 12 mo → anniversary</div></div>
+                <div class="oc"><div class="ok">Dynasty 20% · locked</div><div class="ov" id="oDyn">$0</div><div class="os">Minimum · or this doesn&rsquo;t work</div></div>
+                <div class="oc accent"><div class="ok">→ Wellness / HWL</div><div class="ov" id="oY1">$0</div><div class="os" id="oThisSub">Y1 redirect · Lead by Example + EE bonus</div></div>
+                <div class="oc"><div class="ok">Owner free cash</div><div class="ov" id="oKeep">$0</div><div class="os" id="oKeepSub">After Dynasty + HWL</div></div>
+              </div>
+              <div class="outgrid" style="margin-top:10px">
+                <div class="oc accent" style="grid-column:1/-1"><div class="ok">Vision year → HWL</div><div class="ov" id="oThis">$0</div><div class="os" id="oYearPick">Y1–Y3 · change is not a short-term sport</div></div>
               </div>
 
-              <div class="ytable" id="glideTable" aria-label="Five-year reinvest glide"></div>
-              <p class="cnote" id="reinvestNote"><b>Recommendation, not seizure.</b> Glide applies when owner chooses Reinvest. Dynasty Lane 01 fee economics stay separate. Live clients use <b>their</b> staged annual — $217K is demo only when ?test=1.</p>
+              <div class="ytable" id="glideTable" aria-label="Redirected dollars · three-year vision"></div>
+              <p class="cnote" id="reinvestNote"><b>12-month stage · 3-year vision.</b> Waste recovery is <b>staged over one year</b> to match the group&rsquo;s <b>insurance anniversary</b> — monthly uploads, quarterly ticks. Strategy is not short-term: sell the <b>3-year vision</b>, contract the <b>1-year commitment</b>. On recovered $ only: <b>Dynasty 20%</b> locked (or this doesn&rsquo;t work). Owner redirect into white-label HWL: <b>Y1 50% · Y2 40% · Y3 30%</b>. Remainder = owner free cash. $10K activation stands separate. Demo $217K only when ?test=1.</p>
               <div class="linkrow">
                 <a href="https://stadium.dynastyplays.com/lobby/lead-by-example/" target="_blank" rel="noopener">Open Lead by Example gate →</a>
               </div>
@@ -361,10 +367,11 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	const TEST = params.get("test") === "1";
 	const DEMO_WASTE = 217000;
 	const FMT = n => "$" + Math.round(n||0).toLocaleString("en-US");
-	const GLIDE = [0.50, 0.40, 0.30, 0.20, 0.10]; // Y1..Y5
+	const GLIDE = [0.50, 0.40, 0.30]; // 3-year vision · HWL redirect of recovered $
+	const DYNASTY_MIN = 0.20; // non-negotiable share of RECOVERED $ · or this doesn't work
 	let STATE = null;
 	let harvestChoice = "reinvest";
-	let corrYear = 1; // 1-5 highlight
+	let corrYear = 1; // 1-3 highlight · three-year vision
 
 	async function load(){
 	  let d;
@@ -425,6 +432,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	}
 
 	function calcCorridor(){
+	  corrYear = Math.min(3, Math.max(1, corrYear|0));
 	  const waste = Math.max(0, Number(document.getElementById("cWaste").value)||0);
 	  const eo = Math.max(0, Number(document.getElementById("cEoPrem").value)||0);
 	  const head = Math.max(0, Number(document.getElementById("cHead").value)||0);
@@ -432,33 +440,56 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  const inCount = Math.round(head * partPct / 100);
 	  const outCount = Math.max(0, head - inCount);
 
-	  // Glide path
-	  const rows = GLIDE.map((pct,i)=>{
+	  // Redirected-dollars waterfall on RECOVERED base
+	  // Stage: 12 months to insurance anniversary · Vision: 3 years (50/40/30)
+	  // Dynasty 20% locked · owner free = remainder
+	  const dyn = waste * DYNASTY_MIN;
+	  const rows = GLIDE.map((hwlPct,i)=>{
 	    const y = i+1;
-	    const hwl = harvestChoice === "reinvest" ? waste * pct : 0;
-	    const keep = waste - hwl;
-	    return { y, pct, hwl, keep };
+	    const hwlOn = harvestChoice === "reinvest";
+	    const hwlPctEff = hwlOn ? hwlPct : 0;
+	    const hwl = waste * hwlPctEff;
+	    // If not reinvesting, owner free = waste - dynasty (still owe Dynasty if recovered)
+	    // If pocket/deploy: HWL=0, free = waste - dyn
+	    const free = Math.max(0, waste - dyn - hwl);
+	    return { y, hwlPct: hwlPctEff, hwlPctLabel: hwlPct, hwl, dyn, free, waste };
 	  });
 	  const y1 = rows[0];
 	  const thisY = rows[corrYear-1] || rows[0];
 
-	  document.getElementById("oY1").textContent = FMT(y1.hwl);
-	  document.getElementById("oThis").textContent = FMT(thisY.hwl);
-	  document.getElementById("oThisSub").textContent = harvestChoice === "reinvest"
-	    ? `Year ${thisY.y} · ${Math.round(thisY.pct*100)}% of staged waste`
+	  document.getElementById("oBase").textContent = FMT(waste);
+	  document.getElementById("oBaseSub").textContent = harvestChoice === "reinvest"
+	    ? "Annual base · staged 12 mo to anniversary"
 	    : harvestChoice === "pocket"
-	      ? "Pocket selected · HWL pool $0"
-	      : "Deploy selected · HWL pool $0 until Reinvest";
-	  document.getElementById("oKeep").textContent = FMT(thisY.keep);
+	      ? "Staged annual · pocket (HWL dark)"
+	      : "Staged annual · deploy elsewhere";
+	  document.getElementById("oDyn").textContent = FMT(dyn);
+	  document.getElementById("oY1").textContent = FMT(y1.hwl);
+	  document.getElementById("oThisSub").textContent = harvestChoice === "reinvest"
+	    ? `Y1 · ${Math.round(y1.hwlPctLabel*100)}% of recovered → white-label HWL`
+	    : "Reinvest off · HWL $0";
+	  document.getElementById("oThis").textContent = FMT(thisY.hwl);
+	  document.getElementById("oYearPick").textContent = harvestChoice === "reinvest"
+	    ? `Year ${thisY.y} · ${Math.round(thisY.hwlPctLabel*100)}% → HWL · Dynasty still ${Math.round(DYNASTY_MIN*100)}%`
+	    : "Select Reinvest to light HWL redirect";
+	  document.getElementById("oKeep").textContent = FMT(thisY.free);
 	  document.getElementById("oKeepSub").textContent = harvestChoice === "reinvest"
-	    ? `${Math.round((1-thisY.pct)*100)}% stays with business / other deploy`
-	    : "Full staged waste available outside HWL";
+	    ? `${Math.round((thisY.free/Math.max(waste,1))*100)}% free after Dynasty + HWL`
+	    : `${Math.round(((waste-dyn)/Math.max(waste,1))*100)}% free after Dynasty 20%`;
 
-	  let ghtml = `<div class="yrow head"><span>Year</span><span>% → HWL</span><span class="amt">HWL pool</span><span class="amt hide-sm">Business keeps</span></div>`;
+	  // Table: Year | Dyn 20% | %→HWL | $ HWL | Owner free
+	  let ghtml = `<div class="yrow head yrow5"><span>Year</span><span>Dynasty 20%</span><span>% → HWL</span><span class="amt">$ → HWL</span><span class="amt">Owner free</span></div>`;
 	  rows.forEach(r=>{
 	    const on = r.y === corrYear ? " on" : "";
-	    ghtml += `<div class="yrow${on}" data-year="${r.y}" style="cursor:pointer"><span>Y${r.y}</span><span>${Math.round(r.pct*100)}%</span><span class="amt hi">${FMT(r.hwl)}</span><span class="amt hide-sm">${FMT(r.keep)}</span></div>`;
+	    const pctLab = harvestChoice === "reinvest" ? `${Math.round(r.hwlPctLabel*100)}%` : "—";
+	    const floor = (r.y === 3 && harvestChoice === "reinvest") ? " · Y3" : "";
+	    ghtml += `<div class="yrow yrow5${on}" data-year="${r.y}" style="cursor:pointer"><span>Y${r.y}</span><span>${FMT(r.dyn)}</span><span>${pctLab}${floor}</span><span class="amt hi">${FMT(r.hwl)}</span><span class="amt">${FMT(r.free)}</span></div>`;
 	  });
+	  // totals row Y1-Y3 vision
+	  const sumHwl = rows.reduce((a,r)=>a+r.hwl,0);
+	  const sumFree = rows.reduce((a,r)=>a+r.free,0);
+	  const sumDyn = rows.reduce((a,r)=>a+r.dyn,0);
+	  ghtml += `<div class="yrow yrow5 head"><span>3-yr</span><span>${FMT(sumDyn)}</span><span>vision</span><span class="amt hi">${FMT(sumHwl)}</span><span class="amt">${FMT(sumFree)}</span></div>`;
 	  const gt = document.getElementById("glideTable");
 	  gt.innerHTML = ghtml;
 	  gt.querySelectorAll(".yrow[data-year]").forEach(row=>{
