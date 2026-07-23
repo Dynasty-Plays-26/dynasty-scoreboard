@@ -111,6 +111,9 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  .corridor .cgrid{grid-template-columns:1fr 1fr}
 	  .corridor .outgrid,.corridor .outgrid4,.corridor .harvest{grid-template-columns:1fr}
 	  .corridor .yrow5{grid-template-columns:48px 1fr 1fr !important}
+	  .corridor .yrow6{grid-template-columns:40px 1fr 1fr 1fr !important}
+	  .corridor .yrow6 span:nth-child(4),
+	  .corridor .yrow6 span:nth-child(n+6){/* keep key cols on mobile */}
 	  .corridor .yrow{grid-template-columns:56px 1fr 1fr}
 	  .corridor .yrow .hide-sm{display:none}
 	}
@@ -478,18 +481,20 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	    : `${Math.round(((waste-dyn)/Math.max(waste,1))*100)}% free after Dynasty 20%`;
 
 	  // Table: Year | Dyn 20% | %→HWL | $ HWL | Owner free
-	  let ghtml = `<div class="yrow head yrow5"><span>Year</span><span>Dynasty 20%</span><span>% → HWL</span><span class="amt">$ → HWL</span><span class="amt">Owner free</span></div>`;
+	  let ghtml = `<div class="yrow head yrow6"><span>Year</span><span>Dynasty 20%</span><span>Employer 80%</span><span>% → HWL</span><span class="amt">$ → HWL</span><span class="amt">Owner free</span></div>`;
 	  rows.forEach(r=>{
 	    const on = r.y === corrYear ? " on" : "";
 	    const pctLab = harvestChoice === "reinvest" ? `${Math.round(r.hwlPctLabel*100)}%` : "—";
 	    const floor = (r.y === 3 && harvestChoice === "reinvest") ? " · Y3" : "";
-	    ghtml += `<div class="yrow yrow5${on}" data-year="${r.y}" style="cursor:pointer"><span>Y${r.y}</span><span>${FMT(r.dyn)}</span><span>${pctLab}${floor}</span><span class="amt hi">${FMT(r.hwl)}</span><span class="amt">${FMT(r.free)}</span></div>`;
+	    const emp80 = waste * 0.80;
+	    ghtml += `<div class="yrow yrow6${on}" data-year="${r.y}" style="cursor:pointer"><span>Y${r.y}</span><span>${FMT(r.dyn)}</span><span class="amt hi">${FMT(emp80)}</span><span>${pctLab}${floor}</span><span class="amt hi">${FMT(r.hwl)}</span><span class="amt">${FMT(r.free)}</span></div>`;
 	  });
 	  // totals row Y1-Y3 vision
 	  const sumHwl = rows.reduce((a,r)=>a+r.hwl,0);
 	  const sumFree = rows.reduce((a,r)=>a+r.free,0);
 	  const sumDyn = rows.reduce((a,r)=>a+r.dyn,0);
-	  ghtml += `<div class="yrow yrow5 head"><span>3-yr</span><span>${FMT(sumDyn)}</span><span>vision</span><span class="amt hi">${FMT(sumHwl)}</span><span class="amt">${FMT(sumFree)}</span></div>`;
+	  const sumEmp = waste * 0.80 * rows.length;
+	  ghtml += `<div class="yrow yrow6 head"><span>3-yr</span><span>${FMT(sumDyn)}</span><span class="amt hi">${FMT(sumEmp)}</span><span>vision</span><span class="amt hi">${FMT(sumHwl)}</span><span class="amt">${FMT(sumFree)}</span></div>`;
 	  const gt = document.getElementById("glideTable");
 	  gt.innerHTML = ghtml;
 	  gt.querySelectorAll(".yrow[data-year]").forEach(row=>{
