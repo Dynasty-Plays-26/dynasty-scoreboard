@@ -18,9 +18,10 @@
      (cron) scheduled()              -> sweep report_schedule for due quarterly reports
    ===================================================================== */
 
-const FEE_OWNER_SHARE = 0.80;   // owner keeps 80% of realized savings
-const FEE_DYNASTY_SHARE = 0.20;  // Dynasty 20% performance fee (GTM lock)
-const FEE_ACTIVATION = 10000;   // $10k Tier-1 activation — separate from performance fee
+const FEE_OWNER_SHARE = 0.80;   // owner keeps 80% of RECOVERED dollars
+const FEE_DYNASTY_SHARE = 0.20;  // Dynasty 20% of RECOVERED only (joined at the hip)
+const FEE_ACTIVATION = 10000;   // $10k Tier-1 gate when waste ≥ $100k — stands either way
+const FEE_WASTE_GATE = 100000;  // minimum staged waste to invite T1 activation
 const LIGHT_DAYS = 30;
 const FULL_DAYS = 365;
 
@@ -28,11 +29,17 @@ const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", "access-control-allow-origin": "*" } });
 const bad = (msg, status = 400) => json({ ok: false, error: msg }, status);
 
-// ---- fee math (80/20 GTM lock) ----
-// Performance fee = 20% of staged/realized annual waste.
-// $10k activation is a separate Tier-1 gate (Frost wire), not blended into this %.
+// ---- fee math (two-layer · owner-first) ----
+// Layer 1 — ACTIVATION: waste ≥ $100k → $10k flat Tier-1. Identify · analyze · report.
+//           Owner holds the recovery switch (ads + disads). $10k STANDS if they never recover.
+// Layer 2 — RECOVERY: only if owner recovers. Dynasty 20% of recovered $ · owner keeps 80%.
+//           Joined at the hip on recovered dollars only. This is about the owner, not Dynasty.
+// feeForWaste(w) = projected Dynasty share IF the full staged amount is recovered (not a bill on staging).
 function feeForWaste(w) {
   return Math.round((Number(w) || 0) * FEE_DYNASTY_SHARE);
+}
+function activationDue(w) {
+  return (Number(w) || 0) >= FEE_WASTE_GATE ? FEE_ACTIVATION : 0;
 }
 function monthlyReduction(w) { return w / 12; }
 
@@ -348,7 +355,7 @@ function renderReportHTML(c, payload, kind, quarter) {
     <div class="card"><div class="k">Dynasty fee to date</div><div class="v">${money(f.feeToDate)}</div></div>
     <div class="card"><div class="k">Monthly reduction</div><div class="v">${money(f.monthly)}</div></div>
   </div>
-  <p><b>You keep 80%</b> of every recovered dollar. Dynasty performance fee is <b>20%</b> of realized savings, collected monthly in lockstep with validated savings — never a lump sum. The $10,000 Tier-1 activation is separate.</p>
+  <p><b>This is about you, not Dynasty.</b> Tier-1 activation is a <b>$10,000</b> flat fee when waste is $100,000+ — paid so we identify, analyze, and report. You hold the recovery switch. The $10,000 stands whether you recover or not. <b>Only if you recover</b> do we join at the hip: you keep <b>80%</b> of every recovered dollar; Dynasty takes <b>20%</b> of recovered only, collected monthly in lockstep — never a lump sum.</p>
   <table><thead><tr><th>Month</th><th>Validated</th><th>Savings</th></tr></thead><tbody>
     ${(f.months || []).map(m => `<tr><td>M${m.m}</td><td>${m.validated ? "✓" : "—"}</td><td>${money(m.savings)}</td></tr>`).join("")}
   </tbody></table>

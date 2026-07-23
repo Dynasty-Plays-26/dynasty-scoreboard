@@ -34,14 +34,16 @@ dynasty-scoreboard/
 `light → awaiting_wire → awaiting_statement → full ⇄ gray`
 Any state → `exception` (auto on engine failure OR manual flag) → `resolve` back to prior state.
 
-## Fee model (80/20 — GTM lock)
+## Fee model (two-layer · owner-first)
 
-- Owner keeps **80%** of every recovered / realized dollar.
-- Dynasty performance fee = **20%** of realized savings.
-- `$10,000` Tier-1 activation (Frost wire) is **separate** — lights the full board; not blended into the 20%.
-- Performance fee ÷ 12, collected **monthly in lockstep** with validated savings — never a lump sum.
-- Examples: $175K waste → $35,000 fee ($2,917/mo). $217K → $43,400 ($3,617/mo). $100K → $20,000 ($1,667/mo).
-- Posture: 20% is the GTM validation floor — not a forever ceiling on value delivered.
+**This is about you, not Dynasty.**
+
+1. **Gate.** Staged waste ≥ **$100,000** → invite Tier 1.
+2. **Activation — $10,000 flat.** Lights T1 so Dynasty can identify, analyze, and report. Owner holds the **recovery switch** (advantages and disadvantages of recovery are yours to weigh). The **$10K stands** if you never flip the switch.
+3. **Recovery — 80/20 only on recovered dollars.** If you recover, we are joined at the hip: owner keeps **80%** of every recovered dollar; Dynasty takes **20%** of recovered only. No 20% on unrecovered staged waste.
+4. Recovery share ÷ 12, collected **monthly in lockstep** with validated savings — never a lump sum. Activation is never blended into the 20%.
+5. Examples (if full staged amount is recovered): $175K recovered → $35,000 Dynasty share ($2,917/mo). $217K → $43,400 ($3,617/mo). $100K → $20,000 ($1,667/mo) — plus the separate $10K activation already paid.
+6. GTM posture: 20% is the validation floor for market proof — not a claim that the work is only worth 20%.
 
 ## Fiscal quarters
 

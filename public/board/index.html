@@ -64,10 +64,10 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 .tcard .v{font-size:24px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums}
 .tcard.accent .v{color:var(--acc);text-shadow:0 0 16px var(--acc-glow)}
 .tcard .vsub{font-size:11px;color:var(--txt-3);margin-top:4px}
-.keep{margin:18px 0 24px;padding:16px 20px;border-radius:12px;border:1px solid var(--acc-dim);background:var(--acc-soft);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.keep{margin:18px 0 24px;padding:16px 20px;border-radius:12px;border:1px solid var(--acc-dim);background:var(--acc-soft);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .keep .k90{font-size:22px;font-weight:800;color:var(--acc);text-shadow:0 0 14px var(--acc-glow)}
 .keep .k90 small{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--txt-2);text-shadow:none}
-.keep .feelogic{font-size:11px;color:var(--txt-2);line-height:1.7;text-align:right}
+.keep .feelogic{font-size:11px;color:var(--txt-2);line-height:1.65;text-align:right;max-width:420px}
 
 	/* corridor calculator */
 	.corridor{margin:8px 0 28px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
@@ -235,11 +235,11 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
         </div>
         <div class="totals">
           <div class="tcard accent"><div class="k">Realized to date</div><div class="v" id="tRealized">$0</div><div class="vsub" id="tRealizedSub">0 of 12 months validated</div></div>
-          <div class="tcard"><div class="k">Dynasty fee to date</div><div class="v" id="tFee">$0</div><div class="vsub">Collected monthly · never a lump sum</div></div>
+          <div class="tcard"><div class="k">Dynasty share to date</div><div class="v" id="tFee">$0</div><div class="vsub">20% of recovered · monthly lockstep</div></div>
           <div class="tcard"><div class="k">Monthly premium reduction</div><div class="v" id="tMonthly">$0</div><div class="vsub">Annual waste ÷ 12</div></div>
         </div>
         <div class="keep">
-          <div class="k90">You keep 80%<br><small>of every recovered dollar · Dynasty 20%</small></div>
+          <div class="k90">You keep 80%<br><small>of every recovered dollar · this is about you</small></div>
           <div class="feelogic" id="feeLogic"></div>
         </div>
 
@@ -541,16 +541,23 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  const pct = Math.min(100,(f.realizedToDate/d.annualWaste)*100)||0;
 	  document.getElementById("pbarFill").style.width = pct+"%";
 	  document.getElementById("pbPct").textContent = Math.round(pct)+"%";
-	  // 80/20 GTM lock — performance fee only (activation $10K is separate)
-	  const perf = Math.round((d.annualWaste||0) * 0.20);
+	  // Two-layer owner-first fee:
+	  // 1) $10K activation if waste ≥ $100K — identify/analyze/report; stands either way
+	  // 2) 20% only on RECOVERED $ (owner keeps 80%) — joined at the hip if they flip the switch
+	  const staged = d.annualWaste||0;
+	  const perf = Math.round(staged * 0.20);
+	  const fpm = f.feePerMonth || Math.round(perf/12);
 	  document.getElementById("feeLogic").innerHTML =
-	    `Owner keeps <b style="color:var(--acc)">80%</b> · Dynasty <b style="color:var(--acc)">20%</b> of realized<br>Performance fee ${FMT(f.totalFee || perf)} · ${FMT(f.feePerMonth || Math.round(perf/12))}/mo in lockstep<br>$10K activation is separate · GTM validation lock`;
+	    `<b style="color:var(--acc)">$10K</b> T1 activation (waste ≥ $100K) · identify · analyze · report<br>`+
+	    `Stands either way · you hold the recovery switch<br>`+
+	    `If you recover: you keep <b style="color:var(--acc)">80%</b> · Dynasty <b style="color:var(--acc)">20%</b> of recovered only<br>`+
+	    `Projected if full recover: ${FMT(f.totalFee || perf)} · ${FMT(fpm)}/mo in lockstep`;
 	  document.getElementById("fullClock").textContent = `Board lit — ${f.monthsLeft} months remaining`;
 
 	  // months table
 	  const cm = f.currentMonth||1;
 	  const validatedSet = new Set((f.months||[]).filter(m=>m.validated).map(m=>m.m));
-	  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 80%)</span><span class="st">Doc</span></div>`;
+	  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee on recovered (20%)</span><span class="st">Doc</span></div>`;
 	  for(let m=1;m<=12;m++){
 	    const has = validatedSet.has(m);
 	    const isTU = m===12;
