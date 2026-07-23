@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dynasty Stadium · Room 101 · Tier 01 · Light Scoreboard</title>
+<title>Dynasty Stadium · Room 101 · Final Gate</title>
+<meta name="description" content="Room 101 — Light Scoreboard. Waste identified. $10,000 Tier-1 activation opens the Full Scoreboard. You hold the recovery switch." />
 <style>
 :root{
   --page-cap:1200px; --content-cap:1040px; --panel-cap:920px;
@@ -14,7 +15,7 @@
   --mono:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html,body{min-height:100%}
 body{
   background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),transparent 60%),
              radial-gradient(900px 500px at 90% 110%,rgba(57,255,136,.04),transparent 55%),var(--bg);
@@ -26,6 +27,8 @@ body{
 .roomchip b{color:var(--green);font-weight:600}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green-glow)}
 .statebadge{font-size:11px;letter-spacing:.24em;text-transform:uppercase;padding:7px 14px;border-radius:999px;border:1px solid var(--green-dim);color:var(--green);background:var(--green-soft)}
+.statebadge.warn{border-color:#6a5520;color:var(--amber);background:rgba(255,204,85,.08)}
+.statebadge.hot{border-color:#6a2030;color:var(--red);background:rgba(255,85,102,.08)}
 
 .board{max-width:var(--panel-cap);margin:0 auto;border:1px solid var(--line-2);border-radius:20px;
   background:linear-gradient(180deg,var(--panel),var(--bg-2));
@@ -39,97 +42,186 @@ body{
 .field .k{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--txt-3);margin-bottom:7px}
 .field .v{font-size:16px;color:var(--txt);font-weight:600}
 
-.hero{padding:34px 34px 30px;text-align:center}
+.hero{padding:34px 34px 22px;text-align:center}
 .hero .tag{display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--green);border:1px solid var(--green-dim);border-radius:999px;padding:8px 18px;background:var(--green-soft);margin-bottom:22px}
+.hero .tag.hold{color:var(--amber);border-color:#6a5520;background:rgba(255,204,85,.08)}
 .hero .num{font-size:clamp(56px,12vw,108px);font-weight:800;line-height:.92;color:var(--green);letter-spacing:-.02em;text-shadow:0 0 28px var(--green-glow),0 0 60px var(--green-glow);font-variant-numeric:tabular-nums}
 .hero .sub{margin-top:14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-2)}
+.hero .sub2{margin-top:8px;font-size:12px;color:var(--txt-3);letter-spacing:.04em;max-width:34em;margin-left:auto;margin-right:auto;line-height:1.55}
 
-.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent);margin:6px 34px}
-.expiry{margin:8px 34px 0;padding:16px 20px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-2);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+/* path strip */
+.path{margin:0 34px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.path .step{border:1px solid var(--line);border-radius:12px;padding:12px 12px 14px;background:var(--bg-2);min-height:92px}
+.path .step.on{border-color:var(--green-dim);background:var(--green-soft)}
+.path .step .n{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt-3);margin-bottom:6px}
+.path .step.on .n{color:var(--green)}
+.path .step .t{font-size:12px;color:var(--txt-2);line-height:1.4;font-weight:600}
+.path .step.on .t{color:var(--txt)}
+
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-2),transparent);margin:14px 34px 0}
+
+/* economics cards — pre-pay only, no calculator */
+.econ{margin:18px 34px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.econ .card{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--panel)}
+.econ .card.accent{border-color:var(--green-dim);background:var(--green-soft)}
+.econ .card .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px}
+.econ .card.accent .k{color:var(--green)}
+.econ .card .v{font-size:22px;font-weight:800;color:var(--txt);line-height:1.15}
+.econ .card.accent .v{color:var(--green);text-shadow:0 0 14px var(--green-glow)}
+.econ .card .s{margin-top:8px;font-size:11px;color:var(--txt-2);line-height:1.5}
+
+.pillars{margin:12px 34px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pillars .row{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:12px;align-items:start}
+.pillars .row:last-child{border-bottom:0}
+.pillars .row .lab{color:var(--green);letter-spacing:.12em;text-transform:uppercase;font-size:10px;padding-top:2px}
+.pillars .row .body{color:var(--txt-2);line-height:1.55}
+.pillars .row .body b{color:var(--txt);font-weight:600}
+
+.expiry{margin:16px 34px 0;padding:16px 20px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-2);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .expiry .lead{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-3)}
-.expiry .cd{font-size:20px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+.expiry .cd{font-size:18px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
 .expiry .cd.warn{color:var(--red)}
 
-.cta{padding:26px 34px 34px}
-.cta .big{width:100%;display:block;text-align:center;font-family:var(--mono);font-size:17px;font-weight:700;letter-spacing:.04em;color:#04120a;background:linear-gradient(180deg,#4dffa0,var(--green));border:0;border-radius:14px;padding:20px;cursor:pointer;box-shadow:0 0 34px -6px var(--green-glow);transition:.15s}
-.cta .big:hover{transform:translateY(-1px);box-shadow:0 0 44px -4px var(--green-glow)}
-.cta .fine{text-align:center;margin-top:14px;font-size:11px;color:var(--txt-3);letter-spacing:.08em}
+.cta{padding:22px 34px 28px}
+.cta .big{width:100%;display:block;text-align:center;font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.03em;color:#04120a;background:linear-gradient(180deg,#4dffa0,var(--green));border:0;border-radius:14px;padding:20px;cursor:pointer;box-shadow:0 0 34px -6px var(--green-glow);transition:.15s}
+.cta .big:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 0 44px -4px var(--green-glow)}
+.cta .big:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.cta .fine{text-align:center;margin-top:14px;font-size:11px;color:var(--txt-3);letter-spacing:.04em;line-height:1.6;max-width:40em;margin-left:auto;margin-right:auto}
+.cta .fine b{color:var(--txt-2);font-weight:600}
 
-/* wire panel (revealed after CTA) */
+.gatehold{display:none;margin:0 34px 28px;padding:18px 20px;border:1px solid #4a3f20;border-radius:14px;background:rgba(255,204,85,.06)}
+.gatehold.show{display:block}
+.gatehold .t{font-size:13px;color:var(--amber);font-weight:600;margin-bottom:6px}
+.gatehold .b{font-size:12px;color:var(--txt-2);line-height:1.55}
+
+/* wire panel */
 .wire{display:none;padding:0 34px 34px}
 .wire.show{display:block}
 .wire .box{border:1px solid var(--green-dim);border-radius:14px;background:var(--green-soft);padding:24px}
-.wire h3{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+.wire h3{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.wire .lead{font-size:12px;color:var(--txt-2);margin-bottom:16px;line-height:1.5}
 .wire dl{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-size:14px}
 .wire dt{color:var(--txt-3);letter-spacing:.08em}
 .wire dd{color:var(--txt);font-weight:600}
+.wire .amt{font-size:28px;font-weight:800;color:var(--green);text-shadow:0 0 16px var(--green-glow);margin:4px 0 14px;font-variant-numeric:tabular-nums}
 .wire .note{margin-top:18px;font-size:12px;color:var(--txt-2);line-height:1.7}
+.wire .note b{color:var(--txt)}
+.wire .next{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.wire .next .n{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg-2);font-size:11px;color:var(--txt-2);line-height:1.45}
+.wire .next .n b{display:block;color:var(--green);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
 
-/* exception state */
+/* exception */
 .exception{display:none;padding:0 34px 34px}
 .exception.show{display:block}
 .exception .box{border:1px solid #4a3f20;border-radius:14px;background:rgba(255,204,85,.06);padding:26px;text-align:center}
-.exception .ico{font-size:26px;margin-bottom:12px}
+.exception .ico{font-size:26px;margin-bottom:12px;color:var(--amber)}
 .exception .msg{font-size:17px;color:var(--amber);font-weight:600;line-height:1.6}
 .exception .sub{margin-top:12px;font-size:12px;color:var(--txt-2);letter-spacing:.06em}
 
 .meta{max-width:var(--panel-cap);margin:18px auto 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-3)}
-@media (max-width:640px){.hdr-fields{grid-template-columns:1fr}.wire dl{grid-template-columns:1fr}}
+.footlink{max-width:var(--panel-cap);margin:14px auto 0;text-align:center;font-size:11px;color:var(--txt-3)}
+.footlink a{color:var(--green);text-decoration:none;border-bottom:1px solid var(--green-dim)}
+
+@media (max-width:720px){
+  .hdr-fields,.path,.econ,.wire .next{grid-template-columns:1fr}
+  .pillars .row{grid-template-columns:1fr}
+  .wire dl{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div class="topstrip">
-  <span class="roomchip"><span class="dot"></span> DYNASTY STADIUM · <b>ROOM 101 · TIER 01</b></span>
+  <span class="roomchip"><span class="dot"></span> DYNASTY STADIUM · <b>ROOM 101 · FINAL GATE</b></span>
   <span class="statebadge" id="stateBadge">LIGHT · LIT</span>
 </div>
 
 <div class="board" id="board">
-  <!-- SHARED HEADER -->
   <div class="hdr">
     <div class="hdr-fields">
       <div class="field"><div class="k">Company</div><div class="v" id="fCompany">—</div></div>
       <div class="field"><div class="k">Insurance Carrier</div><div class="v" id="fCarrier">—</div></div>
-      <div class="field"><div class="k">Renewal Date</div><div class="v" id="fRenewal">—</div></div>
+      <div class="field"><div class="k">Renewal / Anniversary</div><div class="v" id="fRenewal">—</div></div>
     </div>
   </div>
-  <!-- WASTE BOX HERO -->
+
   <div class="hero">
-    <span class="tag">ANNUAL WASTE IDENTIFIED · $100,000+</span>
+    <span class="tag" id="wasteTag">STAGED ANNUAL WASTE</span>
     <div class="num" id="fWaste">$0</div>
-    <div class="sub">Recoverable annual group-health plan waste</div>
+    <div class="sub">Recoverable group-health plan waste</div>
+    <div class="sub2" id="heroSub">Identified. Not seized. You hold the recovery switch.</div>
   </div>
 
-  <!-- LIGHT teaser -->
+  <!-- LIGHT -->
   <div id="lightBlock">
-    <div class="rule"></div>
+    <div class="path" aria-label="Path to full board">
+      <div class="step on"><div class="n">01 · Now</div><div class="t">Waste on the board. Light access.</div></div>
+      <div class="step" id="step2"><div class="n">02 · Gate</div><div class="t">$10K activation · Frost wire.</div></div>
+      <div class="step"><div class="n">03 · Prove</div><div class="t">First monthly statement through the engine.</div></div>
+      <div class="step"><div class="n">04 · Full</div><div class="t">12-mo board · anniversary stage · your call.</div></div>
+    </div>
+
+    <div class="econ">
+      <div class="card accent">
+        <div class="k">Tier-1 activation</div>
+        <div class="v">$10,000</div>
+        <div class="s">Flat. Identify · analyze · report. <b style="color:var(--txt)">Stands whether you recover or not.</b></div>
+      </div>
+      <div class="card">
+        <div class="k">After you recover</div>
+        <div class="v">80 / 20</div>
+        <div class="s">You keep <b style="color:var(--txt)">80%</b> of recovered $. Dynasty <b style="color:var(--txt)">20%</b> only if you flip the switch. This is about you.</div>
+      </div>
+    </div>
+
+    <div class="pillars" aria-label="What the gate is">
+      <div class="row"><div class="lab">Gate</div><div class="body">Waste ≥ <b>$100,000</b> invites Tier 1. Below that, the light board still shows truth — activation stays dark.</div></div>
+      <div class="row"><div class="lab">You own</div><div class="body">The <b>recovery switch</b>. Ads and disads of recovery are yours. We do not seize staged waste.</div></div>
+      <div class="row"><div class="lab">Opens</div><div class="body">Full Scoreboard: 12-month run staged to your <b>insurance anniversary</b>, monthly validation, quarterly ticks, redirected-dollars table (HWL from your 80% net).</div></div>
+      <div class="row"><div class="lab">Not here</div><div class="body">No wellness calculator on this gate. Reinvest tools light <b>after</b> pay — on the Full board.</div></div>
+    </div>
+
     <div class="expiry">
       <span class="lead">Light board — teaser access</span>
       <span class="cd" id="lightCd">This board expires in 30 days.</span>
     </div>
+
+    <div class="gatehold" id="gateHold">
+      <div class="t">Activation gate not cleared</div>
+      <div class="b" id="gateHoldBody">Tier-1 unlock requires staged waste of $100,000 or more. Your number is on the board — keep the file open with Victoria when it crosses the line.</div>
+    </div>
+
     <div class="cta">
-      <button class="big" id="unlockBtn" onclick="unlock()">Unlock the Full Scoreboard — $10,000 to start.</button>
-      <div class="fine">One flat fee opens the 12-month board. Then you only pay in lockstep with validated savings.</div>
+      <button class="big" id="unlockBtn" type="button" onclick="unlock()">Unlock the Full Scoreboard — $10,000 to start</button>
+      <div class="fine" id="ctaFine">One flat fee opens identify · analyze · report. <b>Recovery is your switch.</b> Performance share (20%) only hits dollars you actually recover — monthly lockstep, never a lump sum.</div>
     </div>
   </div>
 
-  <!-- Frost wire panel -->
+  <!-- Frost wire -->
   <div class="wire" id="wireBlock">
     <div class="box">
-      <h3>◇ Frost Bank Wire — $10,000 to start</h3>
+      <h3>Frost Bank Wire</h3>
+      <div class="lead">Tier-1 activation · stands either way · reference required</div>
+      <div class="amt">$10,000.00</div>
       <dl>
         <dt>Beneficiary</dt><dd>Dynasty Holdings LLC</dd>
         <dt>Bank</dt><dd>Frost Bank</dd>
-        <dt>Routing / Account</dt><dd id="wireAcct">Provided on the wire instructions page</dd>
+        <dt>Routing / Account</dt><dd id="wireAcct">On the wire instructions page · Victoria has your packet</dd>
         <dt>Reference</dt><dd id="wireRef">—</dd>
       </dl>
+      <div class="next">
+        <div class="n"><b>1 · Wire</b>Send $10,000 with reference above.</div>
+        <div class="n"><b>2 · Confirm</b>We confirm receipt (HITL). Board moves to statement.</div>
+        <div class="n"><b>3 · Full</b>Upload month-1 billing PDF · engine lights Room 303.</div>
+      </div>
       <div class="note">
-        Send the wire, then we confirm receipt. Your Full Scoreboard lights the moment payment clears and your first
-        monthly billing statement runs through the engine. Questions? Victoria has your file.
+        <b>What you bought:</b> identify · analyze · report on the waste above. You still hold the recovery switch.
+        If you recover later, we join at the hip — <b>you keep 80%</b> of recovered dollars; Dynasty takes <b>20%</b> of recovered only.
+        Questions? Victoria has your file.
       </div>
     </div>
   </div>
 
-  <!-- HITL exception -->
+  <!-- HITL -->
   <div class="exception" id="exceptionBlock">
     <div class="box">
       <div class="ico">◇</div>
@@ -139,18 +231,25 @@ body{
   </div>
 </div>
 
-<div class="meta panel-cap">
+<div class="meta">
   <span id="metaClient">CLIENT: —</span>
-  <span id="metaTier">TIER 01 · TRUTH ROOM</span>
+  <span id="metaTier">ROOM 101 · FINAL GATE</span>
   <span id="metaState">STATE: LIGHT</span>
+</div>
+<div class="footlink">
+  <a href="/lobby/lead-by-example/">Lead by Example</a> is a reinvest destination — it opens after recovery, not instead of this gate.
 </div>
 
 <script>
-/* Room 101 Light board — production. Reads/writes the Dynasty Scoreboard Worker.
-   CID is passed via ?cid= (issued when the Tier-0 renewal upload created the record). */
-const API = "https://stadium.dynastyplays.com/api";   // Worker base
-const CID = new URLSearchParams(location.search).get("cid") || "DP-2026-0714";
-const FMT = n => "$" + Math.round(n).toLocaleString("en-US");
+/* Room 101 — Final commercial gate (pre-pay).
+   Full board economics & HWL calculator live on /board/ AFTER $10K + first statement. */
+const API = "https://stadium.dynastyplays.com/api";
+const params = new URLSearchParams(location.search);
+const TEST = params.get("test") === "1";
+const CID = params.get("cid") || (TEST ? "DP-DEMO-217" : "DP-2026-0714");
+const DEMO_WASTE = 217000;
+const GATE = 100000;
+const FMT = n => "$" + Math.round(Number(n)||0).toLocaleString("en-US");
 
 async function load(){
   let d;
@@ -159,20 +258,41 @@ async function load(){
     d = await r.json();
     if(!d.ok) throw new Error(d.error||"load failed");
   }catch(e){
-    // graceful offline fixture so the room still renders if the Worker is unreachable
-    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
-          renewalDate:"2026-11-01", annualWaste:175000, status:"light", light:{daysLeft:30} };
+    d = {
+      ok:true, cid:CID,
+      company:"Lone Star Fabrication LLC",
+      carrier:"Blue Cross Blue Shield of Texas",
+      renewalDate:"2026-11-01",
+      annualWaste: TEST ? DEMO_WASTE : 175000,
+      status:"light",
+      light:{daysLeft:30},
+      demo:true
+    };
   }
+  if(TEST) d.annualWaste = DEMO_WASTE;
   render(d);
 }
 
 function render(d){
+  const waste = Number(d.annualWaste)||0;
+  const gateOk = waste >= GATE;
+
   document.getElementById("fCompany").textContent = d.company||"—";
   document.getElementById("fCarrier").textContent = d.carrier||"—";
   document.getElementById("fRenewal").textContent = d.renewalDate
-    ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
-  document.getElementById("fWaste").textContent = FMT(d.annualWaste||0);
-  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
+    ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})
+    : "—";
+  document.getElementById("fWaste").textContent = FMT(waste);
+  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid + (TEST || d.demo ? " · DEMO" : "");
+
+  const tag = document.getElementById("wasteTag");
+  if(gateOk){
+    tag.textContent = "STAGED ANNUAL WASTE · $100K GATE CLEARED";
+    tag.className = "tag";
+  }else{
+    tag.textContent = "STAGED ANNUAL WASTE · BELOW $100K GATE";
+    tag.className = "tag hold";
+  }
 
   const light = document.getElementById("lightBlock");
   const wire  = document.getElementById("wireBlock");
@@ -180,55 +300,74 @@ function render(d){
   const badge = document.getElementById("stateBadge");
   const metaState = document.getElementById("metaState");
   light.style.display="none"; wire.classList.remove("show"); exc.classList.remove("show");
+  document.getElementById("gateHold").classList.remove("show");
 
   if(d.status==="exception"){
     exc.classList.add("show");
     document.getElementById("exceptionReason").textContent = d.exception?.reason || "";
-    badge.textContent="HITL · 24-HOUR HOLD"; metaState.textContent="STATE: EXCEPTION";
+    badge.textContent="HITL · 24-HOUR HOLD"; badge.className="statebadge warn";
+    metaState.textContent="STATE: EXCEPTION";
     return;
   }
-  if(d.status==="full" || d.status==="gray"){
-    // already paid — send them to the Full board
-    location.href = `/board/?cid=${d.cid}`;
+  if(d.status==="full" || d.status==="gray" || d.status==="awaiting_statement"){
+    location.href = `/board/?cid=${encodeURIComponent(d.cid)}` + (TEST ? "&test=1" : "");
     return;
   }
   if(d.status==="awaiting_wire"){
-    wire.classList.add("show");
-    document.getElementById("wireRef").textContent = "DYN-" + d.cid;
-    badge.textContent="LIGHT · WIRE PENDING"; metaState.textContent="STATE: AWAITING WIRE";
-    return;
-  }
-  if(d.status==="awaiting_statement"){
-    // payment confirmed — Full board handles the upload step
-    location.href = `/board/?cid=${d.cid}`;
+    showWire(d.cid);
     return;
   }
 
-  // default LIGHT
+  // LIGHT
   light.style.display="";
   const dl = d.light?.daysLeft ?? 30;
   const cd = document.getElementById("lightCd");
   if(dl>0){ cd.textContent = `This board expires in ${dl} day${dl===1?"":"s"}.`; cd.className = "cd"+(dl<=7?" warn":""); }
   else { cd.textContent = "This board has expired."; cd.className="cd warn"; }
-  badge.textContent="LIGHT · LIT"; metaState.textContent="STATE: LIGHT";
+
+  const btn = document.getElementById("unlockBtn");
+  const step2 = document.getElementById("step2");
+  if(gateOk){
+    btn.disabled = false;
+    btn.textContent = "Unlock the Full Scoreboard — $10,000 to start";
+    step2.classList.add("on");
+    badge.textContent = "LIGHT · GATE OPEN"; badge.className="statebadge";
+    document.getElementById("heroSub").textContent = "Gate cleared. $10K opens identify · analyze · report. You still hold the recovery switch.";
+  }else{
+    btn.disabled = true;
+    btn.textContent = "Activation requires $100,000+ staged waste";
+    step2.classList.remove("on");
+    badge.textContent = "LIGHT · BELOW GATE"; badge.className="statebadge warn";
+    document.getElementById("gateHold").classList.add("show");
+    document.getElementById("gateHoldBody").textContent =
+      `Tier-1 unlock requires staged waste of $100,000 or more. On the board now: ${FMT(waste)}. Keep the file with Victoria when it crosses the line.`;
+    document.getElementById("heroSub").textContent = "Truth is lit. Activation stays dark until the $100K gate clears.";
+  }
+  metaState.textContent="STATE: LIGHT";
+}
+
+function showWire(cid){
+  document.getElementById("lightBlock").style.display="none";
+  document.getElementById("wireBlock").classList.add("show");
+  document.getElementById("wireRef").textContent = "DYN-" + cid;
+  document.getElementById("stateBadge").textContent="LIGHT · WIRE PENDING";
+  document.getElementById("stateBadge").className="statebadge warn";
+  document.getElementById("metaState").textContent="STATE: AWAITING WIRE";
 }
 
 async function unlock(){
   const btn = document.getElementById("unlockBtn");
+  if(btn.disabled) return;
   btn.disabled=true; btn.textContent="Preparing your wire instructions…";
   try{
     const r = await fetch(`${API}/wire/${CID}`, {method:"POST"});
     const d = await r.json();
-    if(!d.ok) throw new Error(d.error);
-    // reveal wire panel
-    document.getElementById("lightBlock").style.display="none";
-    document.getElementById("wireBlock").classList.add("show");
-    document.getElementById("wireRef").textContent = "DYN-" + CID;
-    document.getElementById("stateBadge").textContent="LIGHT · WIRE PENDING";
-    document.getElementById("metaState").textContent="STATE: AWAITING WIRE";
+    if(!d.ok) throw new Error(d.error||"wire failed");
+    showWire(CID);
   }catch(e){
-    btn.disabled=false; btn.textContent="Unlock the Full Scoreboard — $10,000 to start.";
-    alert("Could not reach the wire desk. Victoria will follow up.");
+    // Worker dark: still reveal wire panel so the commercial gate is never a dead end.
+    // Victoria HITL catches unpaid refs. Demo and live both show instructions.
+    showWire(CID);
   }
 }
 
