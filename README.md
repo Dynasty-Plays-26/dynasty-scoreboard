@@ -25,7 +25,7 @@ dynasty-scoreboard/
 2. **Unlock CTA → Frost wire.** `POST /api/wire/:cid` → `status=awaiting_wire`, reveals Frost wire panel (ref `DYN-<cid>`). Canonical Frost-only path; Stripe/Netlify stay decommissioned.
 3. **Payment confirmed.** Don confirms receipt → `POST /api/payment-confirmed/:cid` → `status=awaiting_statement`. Client is routed to the Full board's activation step.
 4. **Statement upload → engine (auto-run).** `POST /api/upload/:cid` (multipart `statement`). PDF → R2 `statements/<cid>/<m>.pdf`. Engine validates savings. **On success:** first upload sets `status=full`, starts the 12-month clock, builds the fiscal-quarter report schedule, and generates the **initial printable report**. **On failure:** client drops to `status=exception` (HITL) — the engine never shows a bad number.
-5. **Full board — Room 303.** 12-month run, 90/10 fee logic, progress bar + true-up, realized/fee to date, report history. Nudge asked once (Quarterly default).
+5. **Full board — Room 303.** 12-month run, 80/20 fee logic, progress bar + true-up, realized/fee to date, report history. Nudge asked once (Quarterly default).
 6. **Gray-out.** Missing current-month statement → `status` derives to `gray` (board desaturates, banner shows). Next upload relights.
 7. **Quarterly reports.** Cron sweeps `report_schedule` daily; fires each fiscal quarter's report on close date, archives HTML to R2, emails via ZeptoMail (BCC Don). Skips clients on HITL hold.
 
@@ -34,12 +34,14 @@ dynasty-scoreboard/
 `light → awaiting_wire → awaiting_statement → full ⇄ gray`
 Any state → `exception` (auto on engine failure OR manual flag) → `resolve` back to prior state.
 
-## Fee model (90/10)
+## Fee model (80/20 — GTM lock)
 
-- `$10,000` flat on the first `$100,000` found.
-- `+10%` on everything above `$100,000`.
-- Total fee ÷ 12, collected **monthly in lockstep** with validated savings — never a lump sum.
-- Examples: $175K → $17,500 total ($1,458/mo). $250K → $25,000 ($2,083/mo). $100K → $10,000 ($833/mo).
+- Owner keeps **80%** of every recovered / realized dollar.
+- Dynasty performance fee = **20%** of realized savings.
+- `$10,000` Tier-1 activation (Frost wire) is **separate** — lights the full board; not blended into the 20%.
+- Performance fee ÷ 12, collected **monthly in lockstep** with validated savings — never a lump sum.
+- Examples: $175K waste → $35,000 fee ($2,917/mo). $217K → $43,400 ($3,617/mo). $100K → $20,000 ($1,667/mo).
+- Posture: 20% is the GTM validation floor — not a forever ceiling on value delivered.
 
 ## Fiscal quarters
 

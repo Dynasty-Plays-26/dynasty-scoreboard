@@ -18,9 +18,9 @@
      (cron) scheduled()              -> sweep report_schedule for due quarterly reports
    ===================================================================== */
 
-const FEE_FLAT = 10000;          // $10k flat on first $100k
-const FEE_TIER = 100000;         // threshold
-const FEE_RATE = 0.10;           // 10% above threshold
+const FEE_OWNER_SHARE = 0.80;   // owner keeps 80% of realized savings
+const FEE_DYNASTY_SHARE = 0.20;  // Dynasty 20% performance fee (GTM lock)
+const FEE_ACTIVATION = 10000;   // $10k Tier-1 activation — separate from performance fee
 const LIGHT_DAYS = 30;
 const FULL_DAYS = 365;
 
@@ -28,10 +28,11 @@ const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", "access-control-allow-origin": "*" } });
 const bad = (msg, status = 400) => json({ ok: false, error: msg }, status);
 
-// ---- fee math (90/10) ----
+// ---- fee math (80/20 GTM lock) ----
+// Performance fee = 20% of staged/realized annual waste.
+// $10k activation is a separate Tier-1 gate (Frost wire), not blended into this %.
 function feeForWaste(w) {
-  const above = Math.max(0, w - FEE_TIER);
-  return FEE_FLAT + above * FEE_RATE;      // total annual fee
+  return Math.round((Number(w) || 0) * FEE_DYNASTY_SHARE);
 }
 function monthlyReduction(w) { return w / 12; }
 
@@ -347,7 +348,7 @@ function renderReportHTML(c, payload, kind, quarter) {
     <div class="card"><div class="k">Dynasty fee to date</div><div class="v">${money(f.feeToDate)}</div></div>
     <div class="card"><div class="k">Monthly reduction</div><div class="v">${money(f.monthly)}</div></div>
   </div>
-  <p><b>You keep 90%</b> of every recovered dollar. Fee model: $10,000 flat on the first $100,000 found, plus 10% on everything above $100,000, collected monthly in lockstep with validated savings — never a lump sum.</p>
+  <p><b>You keep 80%</b> of every recovered dollar. Dynasty performance fee is <b>20%</b> of realized savings, collected monthly in lockstep with validated savings — never a lump sum. The $10,000 Tier-1 activation is separate.</p>
   <table><thead><tr><th>Month</th><th>Validated</th><th>Savings</th></tr></thead><tbody>
     ${(f.months || []).map(m => `<tr><td>M${m.m}</td><td>${m.validated ? "✓" : "—"}</td><td>${money(m.savings)}</td></tr>`).join("")}
   </tbody></table>

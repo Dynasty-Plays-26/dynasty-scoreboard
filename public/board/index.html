@@ -239,7 +239,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
           <div class="tcard"><div class="k">Monthly premium reduction</div><div class="v" id="tMonthly">$0</div><div class="vsub">Annual waste ÷ 12</div></div>
         </div>
         <div class="keep">
-          <div class="k90">You keep 90%<br><small>of every recovered dollar</small></div>
+          <div class="k90">You keep 80%<br><small>of every recovered dollar · Dynasty 20%</small></div>
           <div class="feelogic" id="feeLogic"></div>
         </div>
 
@@ -375,8 +375,8 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  }catch(e){
 	    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
 	      renewalDate:"2026-11-01", annualWaste: TEST ? DEMO_WASTE : 175000, status:"full",
-	      full:{ monthsLeft:12, currentMonth:3, monthly: Math.round((TEST?DEMO_WASTE:175000)/12), totalFee: TEST ? 21700 : 17500, feePerMonth: TEST ? 1808 : 1458, validated:2,
-	             realizedToDate: Math.round((TEST?DEMO_WASTE:175000)/12)*2, feeToDate: TEST ? 3616 : 2916,
+	      full:{ monthsLeft:12, currentMonth:3, monthly: Math.round((TEST?DEMO_WASTE:175000)/12), totalFee: TEST ? 43400 : 35000, feePerMonth: TEST ? 3617 : 2917, validated:2,
+	             realizedToDate: Math.round((TEST?DEMO_WASTE:175000)/12)*2, feeToDate: TEST ? 7234 : 5834,
 	             months:[{m:1,validated:true,savings:Math.round((TEST?DEMO_WASTE:175000)/12)},{m:2,validated:true,savings:Math.round((TEST?DEMO_WASTE:175000)/12)}] },
 	      reports:[{kind:"initial",quarter:null,key:"reports/"+CID+"/2026-07-10-initial.html",at:"2026-07-10"}],
 	      nudge:"Quarterly", nudgeAsked:true, demo:true };
@@ -541,15 +541,16 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 	  const pct = Math.min(100,(f.realizedToDate/d.annualWaste)*100)||0;
 	  document.getElementById("pbarFill").style.width = pct+"%";
 	  document.getElementById("pbPct").textContent = Math.round(pct)+"%";
-	  const above = Math.max(0, d.annualWaste-100000);
+	  // 80/20 GTM lock — performance fee only (activation $10K is separate)
+	  const perf = Math.round((d.annualWaste||0) * 0.20);
 	  document.getElementById("feeLogic").innerHTML =
-	    `$10,000 flat on first $100,000<br>+ 10% on ${FMT(above)} above $100,000 = ${FMT(above*0.10)}<br>Total fee ${FMT(f.totalFee)} · ${FMT(f.feePerMonth)}/mo in lockstep`;
+	    `Owner keeps <b style="color:var(--acc)">80%</b> · Dynasty <b style="color:var(--acc)">20%</b> of realized<br>Performance fee ${FMT(f.totalFee || perf)} · ${FMT(f.feePerMonth || Math.round(perf/12))}/mo in lockstep<br>$10K activation is separate · GTM validation lock`;
 	  document.getElementById("fullClock").textContent = `Board lit — ${f.monthsLeft} months remaining`;
 
 	  // months table
 	  const cm = f.currentMonth||1;
 	  const validatedSet = new Set((f.months||[]).filter(m=>m.validated).map(m=>m.m));
-	  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 90%)</span><span class="st">Doc</span></div>`;
+	  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 80%)</span><span class="st">Doc</span></div>`;
 	  for(let m=1;m<=12;m++){
 	    const has = validatedSet.has(m);
 	    const isTU = m===12;
