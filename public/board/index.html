@@ -68,6 +68,51 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 .keep .k90{font-size:22px;font-weight:800;color:var(--acc);text-shadow:0 0 14px var(--acc-glow)}
 .keep .k90 small{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--txt-2);text-shadow:none}
 .keep .feelogic{font-size:11px;color:var(--txt-2);line-height:1.7;text-align:right}
+
+	/* corridor calculator */
+	.corridor{margin:8px 0 28px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+	.corridor .ch{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;background:var(--panel-2);border-bottom:1px solid var(--line)}
+	.corridor .ch .ct{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-2)}
+	.corridor .ch .ct b{color:var(--acc);font-weight:700}
+	.corridor .ch .csub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-3)}
+	.corridor .cbody{padding:18px}
+	.corridor .cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+	.corridor label.cin{display:block;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg-2)}
+	.corridor label.cin span{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3);margin-bottom:8px}
+	.corridor label.cin input,.corridor label.cin select{width:100%;background:transparent;border:0;outline:0;color:var(--txt);font-family:var(--mono);font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+	.corridor label.cin input:focus,.corridor label.cin select:focus{color:var(--acc)}
+	.corridor .ctabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+	.corridor .ctab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:8px 12px;border-radius:999px;border:1px solid var(--line-2);background:transparent;color:var(--txt-2);cursor:pointer}
+	.corridor .ctab.on{border-color:var(--acc-dim);color:var(--acc);background:var(--acc-soft)}
+	.corridor .outgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+	.corridor .oc{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--panel-2)}
+	.corridor .oc .ok{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-3);margin-bottom:6px}
+	.corridor .oc .ov{font-size:22px;font-weight:800;color:var(--txt);font-variant-numeric:tabular-nums}
+	.corridor .oc.accent .ov{color:var(--acc);text-shadow:0 0 14px var(--acc-glow)}
+	.corridor .oc .os{font-size:11px;color:var(--txt-3);margin-top:4px;line-height:1.45}
+	.corridor .ytable{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+	.corridor .yrow{display:grid;grid-template-columns:72px 1fr 1fr 1fr;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;align-items:center}
+	.corridor .yrow:last-child{border-bottom:0}
+	.corridor .yrow.head{background:var(--bg-2);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-3)}
+	.corridor .yrow .amt{text-align:right;font-variant-numeric:tabular-nums}
+	.corridor .yrow .amt.hi{color:var(--acc);font-weight:700}
+	.corridor .yrow.on{background:var(--acc-soft)}
+	.corridor .harvest{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+	.corridor .hbtn{font-family:var(--mono);text-align:left;border:1px solid var(--line-2);border-radius:12px;padding:14px;background:var(--bg-2);color:var(--txt);cursor:pointer;transition:.15s}
+	.corridor .hbtn:hover{border-color:var(--acc-dim)}
+	.corridor .hbtn.on{border-color:var(--acc-dim);background:var(--acc-soft);box-shadow:0 0 0 1px var(--acc-dim) inset}
+	.corridor .hbtn .hk{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+	.corridor .hbtn .hb{font-size:12px;color:var(--txt-2);line-height:1.45}
+	.corridor .cnote{font-size:11px;color:var(--txt-3);line-height:1.55}
+	.corridor .cnote b{color:var(--txt-2);font-weight:600}
+	.corridor .linkrow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+	.corridor .linkrow a{font-size:12px;color:var(--acc);text-decoration:none;border-bottom:1px solid var(--acc-dim)}
+	@media (max-width:720px){
+	  .corridor .cgrid{grid-template-columns:1fr 1fr}
+	  .corridor .outgrid,.corridor .harvest{grid-template-columns:1fr}
+	  .corridor .yrow{grid-template-columns:56px 1fr 1fr}
+	  .corridor .yrow .hide-sm{display:none}
+	}
 .months{border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .mrow{display:grid;grid-template-columns:64px 1fr 120px 120px 96px;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px}
 .mrow:last-child{border-bottom:0}
@@ -197,6 +242,76 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
           <div class="k90">You keep 90%<br><small>of every recovered dollar</small></div>
           <div class="feelogic" id="feeLogic"></div>
         </div>
+
+        <!-- CORRIDOR CALCULATOR -->
+        <div class="corridor" id="corridorCalc" aria-label="Employer Recovery Corridor calculator">
+          <div class="ch">
+            <div class="ct">Employer Recovery Corridor · <b>Calculator</b></div>
+            <div class="csub" id="corrModeLabel">Live · staged waste</div>
+          </div>
+          <div class="cbody">
+            <div class="ctabs" role="tablist">
+              <button type="button" class="ctab on" data-panel="reinvest" id="tabReinvest">Reinvest glide</button>
+              <button type="button" class="ctab" data-panel="ladder" id="tabLadder">EO contribution ladder</button>
+            </div>
+
+            <div class="cgrid">
+              <label class="cin"><span>Staged annual waste</span>
+                <input id="cWaste" type="number" min="0" step="1000" value="217000" />
+              </label>
+              <label class="cin"><span>EO monthly premium</span>
+                <input id="cEoPrem" type="number" min="0" step="10" value="650" />
+              </label>
+              <label class="cin"><span>EE on EO (headcount)</span>
+                <input id="cHead" type="number" min="1" step="1" value="42" />
+              </label>
+              <label class="cin"><span>% participating</span>
+                <input id="cPart" type="number" min="0" max="100" step="1" value="70" />
+              </label>
+            </div>
+
+            <div id="panelReinvest">
+              <div class="harvest" id="harvestBtns" role="group" aria-label="Owner harvest choice">
+                <button type="button" class="hbtn" data-choice="pocket" id="hPocket">
+                  <span class="hk">Pocket</span>
+                  <span class="hb">Keep recovered dollars in the business. HWL stays dark.</span>
+                </button>
+                <button type="button" class="hbtn on" data-choice="reinvest" id="hReinvest">
+                  <span class="hk">Reinvest · funds the FUN</span>
+                  <span class="hb">White-label HWL from waste. Y1 50% · back off 10 pts/yr.</span>
+                </button>
+                <button type="button" class="hbtn" data-choice="deploy" id="hDeploy">
+                  <span class="hk">Deploy</span>
+                  <span class="hb">Owner strategy elsewhere. Corridor still available later.</span>
+                </button>
+              </div>
+
+              <div class="outgrid">
+                <div class="oc accent"><div class="ok">Y1 HWL pool (50%)</div><div class="ov" id="oY1">$0</div><div class="os">Aggressive install · Lead by Example + employee bonus</div></div>
+                <div class="oc"><div class="ok">This year → HWL</div><div class="ov" id="oThis">$0</div><div class="os" id="oThisSub">Year 1 · 50% of staged waste</div></div>
+                <div class="oc"><div class="ok">Stays with business</div><div class="ov" id="oKeep">$0</div><div class="os" id="oKeepSub">Not directed to HWL this year</div></div>
+              </div>
+
+              <div class="ytable" id="glideTable" aria-label="Five-year reinvest glide"></div>
+              <p class="cnote" id="reinvestNote"><b>Recommendation, not seizure.</b> Glide applies when owner chooses Reinvest. Dynasty Lane 01 fee economics stay separate. Live clients use <b>their</b> staged annual — $217K is demo only when ?test=1.</p>
+              <div class="linkrow">
+                <a href="https://stadium.dynastyplays.com/lobby/lead-by-example/" target="_blank" rel="noopener">Open Lead by Example gate →</a>
+              </div>
+            </div>
+
+            <div id="panelLadder" hidden>
+              <div class="outgrid">
+                <div class="oc accent"><div class="ok">In program · EE pays</div><div class="ov">$0</div><div class="os">Employer still pays <b style="color:var(--txt)">100% EO</b></div></div>
+                <div class="oc"><div class="ok">Sit-out EE / mo (Y1→Y3)</div><div class="ov" id="oSitMo">$0</div><div class="os" id="oSitMoSub">10% · 20% · 30% of EO premium</div></div>
+                <div class="oc"><div class="ok">Annual EE differential</div><div class="ov" id="oAnnDiff">$0</div><div class="os" id="oAnnDiffSub">If non-participants hit Y3 corridor max</div></div>
+              </div>
+
+              <div class="ytable" id="ladderTable" aria-label="EO contribution ladder"></div>
+              <p class="cnote"><b>Not shame. Math.</b> Participate → 100% EO employer-paid. Sit out → 10% · 20% · up to <b>30% ACA corridor max</b>. Share moves up or down with participation. Reasonable alternatives + annual qualification required (HITL per install). Front-stage name: Employer Recovery Corridor. Backstage: 70/30.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="months" id="monthsTable"></div>
 
         <!-- report history -->
@@ -240,126 +355,248 @@ body{background:radial-gradient(1200px 600px at 50% -10%,rgba(57,255,136,.07),tr
 </div>
 
 <script>
-const API = "https://stadium.dynastyplays.com/api";
-const CID = new URLSearchParams(location.search).get("cid") || "DP-2026-0714";
-const FMT = n => "$" + Math.round(n||0).toLocaleString("en-US");
-let STATE = null;
+	const API = "https://stadium.dynastyplays.com/api";
+	const params = new URLSearchParams(location.search);
+	const CID = params.get("cid") || "DP-2026-0714";
+	const TEST = params.get("test") === "1";
+	const DEMO_WASTE = 217000;
+	const FMT = n => "$" + Math.round(n||0).toLocaleString("en-US");
+	const GLIDE = [0.50, 0.40, 0.30, 0.20, 0.10]; // Y1..Y5
+	let STATE = null;
+	let harvestChoice = "reinvest";
+	let corrYear = 1; // 1-5 highlight
 
-async function load(){
-  let d;
-  try{
-    const r = await fetch(`${API}/board/${CID}`);
-    d = await r.json();
-    if(!d.ok) throw new Error(d.error||"load failed");
-  }catch(e){
-    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
-      renewalDate:"2026-11-01", annualWaste:175000, status:"full",
-      full:{ monthsLeft:12, currentMonth:3, monthly:14583, totalFee:17500, feePerMonth:1458, validated:2,
-             realizedToDate:29166, feeToDate:2916,
-             months:[{m:1,validated:true,savings:14583},{m:2,validated:true,savings:14583}] },
-      reports:[{kind:"initial",quarter:null,key:"reports/"+CID+"/2026-07-10-initial.html",at:"2026-07-10"}],
-      nudge:"Quarterly", nudgeAsked:false };
-  }
-  STATE = d; render(d);
-  if(!d.nudgeAsked && (d.status==="full"||d.status==="gray")) document.getElementById("nudgeModal").classList.add("show");
-}
+	async function load(){
+	  let d;
+	  try{
+	    const r = await fetch(`${API}/board/${CID}`);
+	    d = await r.json();
+	    if(!d.ok) throw new Error(d.error||"load failed");
+	  }catch(e){
+	    d = { ok:true, cid:CID, company:"Lone Star Fabrication LLC", carrier:"Blue Cross Blue Shield of Texas",
+	      renewalDate:"2026-11-01", annualWaste: TEST ? DEMO_WASTE : 175000, status:"full",
+	      full:{ monthsLeft:12, currentMonth:3, monthly: Math.round((TEST?DEMO_WASTE:175000)/12), totalFee: TEST ? 21700 : 17500, feePerMonth: TEST ? 1808 : 1458, validated:2,
+	             realizedToDate: Math.round((TEST?DEMO_WASTE:175000)/12)*2, feeToDate: TEST ? 3616 : 2916,
+	             months:[{m:1,validated:true,savings:Math.round((TEST?DEMO_WASTE:175000)/12)},{m:2,validated:true,savings:Math.round((TEST?DEMO_WASTE:175000)/12)}] },
+	      reports:[{kind:"initial",quarter:null,key:"reports/"+CID+"/2026-07-10-initial.html",at:"2026-07-10"}],
+	      nudge:"Quarterly", nudgeAsked:true, demo:true };
+	  }
+	  if(TEST) d.annualWaste = DEMO_WASTE;
+	  STATE = d; render(d);
+	  seedCorridor(d);
+	  if(!d.nudgeAsked && (d.status==="full"||d.status==="gray")) document.getElementById("nudgeModal").classList.add("show");
+	}
 
-function render(d){
-  document.getElementById("fCompany").textContent = d.company||"—";
-  document.getElementById("fCarrier").textContent = d.carrier||"—";
-  document.getElementById("fRenewal").textContent = d.renewalDate ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
-  document.getElementById("fWaste").textContent = FMT(d.annualWaste);
-  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
-  document.getElementById("metaNudge").textContent = "NUDGE: " + (d.nudge||"Quarterly").toUpperCase();
+	function seedCorridor(d){
+	  const wasteEl = document.getElementById("cWaste");
+	  if(wasteEl && d.annualWaste) wasteEl.value = Math.round(d.annualWaste);
+	  document.getElementById("corrModeLabel").textContent = TEST
+	    ? "Demo fixture · $217K staged"
+	    : (d.demo ? "Preview · sample board" : "Live · staged waste");
+	  bindCorridor();
+	  calcCorridor();
+	}
 
-  const gray = d.status==="gray";
-  document.getElementById("board").setAttribute("data-graybox", gray?"true":"false");
-  const badge = document.getElementById("stateBadge");
-  const act = document.getElementById("activateBlock");
-  const exc = document.getElementById("exceptionBlock");
-  const full= document.getElementById("fullBlock");
-  act.classList.remove("show"); exc.classList.remove("show"); full.style.display="none";
+	function bindCorridor(){
+	  ["cWaste","cEoPrem","cHead","cPart"].forEach(id=>{
+	    const el = document.getElementById(id);
+	    if(el && !el._bound){ el.addEventListener("input", calcCorridor); el._bound = true; }
+	  });
+	  document.querySelectorAll(".ctab").forEach(btn=>{
+	    if(btn._bound) return;
+	    btn._bound = true;
+	    btn.addEventListener("click", ()=>{
+	      document.querySelectorAll(".ctab").forEach(b=>b.classList.remove("on"));
+	      btn.classList.add("on");
+	      const panel = btn.getAttribute("data-panel");
+	      document.getElementById("panelReinvest").hidden = panel !== "reinvest";
+	      document.getElementById("panelLadder").hidden = panel !== "ladder";
+	    });
+	  });
+	  document.querySelectorAll(".hbtn").forEach(btn=>{
+	    if(btn._bound) return;
+	    btn._bound = true;
+	    btn.addEventListener("click", ()=>{
+	      harvestChoice = btn.getAttribute("data-choice");
+	      document.querySelectorAll(".hbtn").forEach(b=>b.classList.toggle("on", b===btn));
+	      calcCorridor();
+	    });
+	  });
+	}
 
-  if(d.status==="exception"){
-    exc.classList.add("show");
-    document.getElementById("exceptionReason").textContent = d.exception?.reason||"";
-    badge.textContent="HITL · 24-HOUR HOLD"; return;
-  }
-  if(d.status==="awaiting_statement"){
-    act.classList.add("show"); badge.textContent="ACTIVATE · UPLOAD STATEMENT"; return;
-  }
-  if(d.status==="light" || d.status==="awaiting_wire"){
-    location.href = `/room-101/?cid=${d.cid}`; return;
-  }
+	function calcCorridor(){
+	  const waste = Math.max(0, Number(document.getElementById("cWaste").value)||0);
+	  const eo = Math.max(0, Number(document.getElementById("cEoPrem").value)||0);
+	  const head = Math.max(0, Number(document.getElementById("cHead").value)||0);
+	  const partPct = Math.min(100, Math.max(0, Number(document.getElementById("cPart").value)||0));
+	  const inCount = Math.round(head * partPct / 100);
+	  const outCount = Math.max(0, head - inCount);
 
-  // FULL / GRAY
-  full.style.display=""; badge.textContent = gray ? "FULL · GRAY (STATEMENT DUE)" : "FULL · LIT";
-  const f = d.full||{};
-  document.getElementById("tMonthly").textContent  = FMT(f.monthly);
-  document.getElementById("tRealized").textContent = FMT(f.realizedToDate);
-  document.getElementById("tRealizedSub").textContent = `${f.validated||0} of 12 months validated`;
-  document.getElementById("tFee").textContent      = FMT(f.feeToDate);
-  const pct = Math.min(100,(f.realizedToDate/d.annualWaste)*100)||0;
-  document.getElementById("pbarFill").style.width = pct+"%";
-  document.getElementById("pbPct").textContent = Math.round(pct)+"%";
-  const above = Math.max(0, d.annualWaste-100000);
-  document.getElementById("feeLogic").innerHTML =
-    `$10,000 flat on first $100,000<br>+ 10% on ${FMT(above)} above $100,000 = ${FMT(above*0.10)}<br>Total fee ${FMT(f.totalFee)} · ${FMT(f.feePerMonth)}/mo in lockstep`;
-  document.getElementById("fullClock").textContent = `Board lit — ${f.monthsLeft} months remaining`;
+	  // Glide path
+	  const rows = GLIDE.map((pct,i)=>{
+	    const y = i+1;
+	    const hwl = harvestChoice === "reinvest" ? waste * pct : 0;
+	    const keep = waste - hwl;
+	    return { y, pct, hwl, keep };
+	  });
+	  const y1 = rows[0];
+	  const thisY = rows[corrYear-1] || rows[0];
 
-  // months table
-  const cm = f.currentMonth||1;
-  const validatedSet = new Set((f.months||[]).filter(m=>m.validated).map(m=>m.m));
-  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 90%)</span><span class="st">Doc</span></div>`;
-  for(let m=1;m<=12;m++){
-    const has = validatedSet.has(m);
-    const isTU = m===12;
-    let sp, dp, sv="—", fe="—";
-    if(has){ sp=`<span class="pill ok">Validated</span>`; dp=`<span class="pill ok">✓</span>`; sv=FMT(f.monthly); fe=FMT(f.feePerMonth); }
-    else if(m<cm){ sp=`<span class="pill miss">Missing</span>`; dp=`<span class="pill miss">✗</span>`; }
-    else if(m===cm){ sp=`<span class="pill pend">Due now</span>`; dp=`<span class="pill pend">•••</span>`; }
-    else { sp=`<span class="pill pend">Upcoming</span>`; dp=`<span class="pill pend">—</span>`; }
-    const tu = isTU?` <span class="pill tu">True-up</span>`:"";
-    html += `<div class="mrow"><span class="mo">M${m}</span><span>${sp}${tu}</span><span class="amt save">${sv}</span><span class="amt fee fee-col">${fe}</span><span class="st">${dp}</span></div>`;
-  }
-  document.getElementById("monthsTable").innerHTML = html;
-  document.getElementById("uploadFor").textContent = gray ? `Next required: Month ${cm} (overdue — board grayed)` : `Next required: Month ${cm}`;
+	  document.getElementById("oY1").textContent = FMT(y1.hwl);
+	  document.getElementById("oThis").textContent = FMT(thisY.hwl);
+	  document.getElementById("oThisSub").textContent = harvestChoice === "reinvest"
+	    ? `Year ${thisY.y} · ${Math.round(thisY.pct*100)}% of staged waste`
+	    : harvestChoice === "pocket"
+	      ? "Pocket selected · HWL pool $0"
+	      : "Deploy selected · HWL pool $0 until Reinvest";
+	  document.getElementById("oKeep").textContent = FMT(thisY.keep);
+	  document.getElementById("oKeepSub").textContent = harvestChoice === "reinvest"
+	    ? `${Math.round((1-thisY.pct)*100)}% stays with business / other deploy`
+	    : "Full staged waste available outside HWL";
 
-  // reports
-  const rl = document.getElementById("reportsList");
-  const rb = document.getElementById("reportsBlock");
-  if((d.reports||[]).length){
-    rb.style.display="";
-    rl.innerHTML = d.reports.map(r=>{
-      const file = r.key.split("/").pop();
-      const label = r.kind==="initial" ? "Initial Waste Report" : `Quarterly · ${r.quarter||""}`;
-      return `<div class="rrow"><span class="rk">${label}</span><span class="rq">${r.at}</span><a href="${API}/report/${d.cid}/${file}" target="_blank">Open / print</a></div>`;
-    }).join("");
-  } else rb.style.display="none";
-}
+	  let ghtml = `<div class="yrow head"><span>Year</span><span>% → HWL</span><span class="amt">HWL pool</span><span class="amt hide-sm">Business keeps</span></div>`;
+	  rows.forEach(r=>{
+	    const on = r.y === corrYear ? " on" : "";
+	    ghtml += `<div class="yrow${on}" data-year="${r.y}" style="cursor:pointer"><span>Y${r.y}</span><span>${Math.round(r.pct*100)}%</span><span class="amt hi">${FMT(r.hwl)}</span><span class="amt hide-sm">${FMT(r.keep)}</span></div>`;
+	  });
+	  const gt = document.getElementById("glideTable");
+	  gt.innerHTML = ghtml;
+	  gt.querySelectorAll(".yrow[data-year]").forEach(row=>{
+	    row.addEventListener("click", ()=>{ corrYear = Number(row.getAttribute("data-year")); calcCorridor(); });
+	  });
 
-async function onUpload(e){
-  const f = e.target.files[0]; if(!f) return;
-  const fd = new FormData(); fd.append("statement", f);
-  try{
-    const r = await fetch(`${API}/upload/${CID}`, {method:"POST", body:fd});
-    const d = await r.json();
-    e.target.value="";
-    await load();
-    if(d.status==="exception"){ /* board now shows HITL */ }
-  }catch(err){ alert("Upload failed — Victoria will follow up."); }
-}
+	  // EO ladder
+	  const sit = [0.10, 0.20, 0.30].map(p => eo * p);
+	  document.getElementById("oSitMo").textContent = `${FMT(sit[0])} → ${FMT(sit[2])}`;
+	  document.getElementById("oSitMoSub").textContent = `Per non-participant / month · EO ${FMT(eo)}`;
+	  const y3AnnPer = sit[2] * 12;
+	  const y3AnnAllOut = y3AnnPer * outCount;
+	  document.getElementById("oAnnDiff").textContent = FMT(y3AnnAllOut);
+	  document.getElementById("oAnnDiffSub").textContent = `${outCount} non-participants × ${FMT(y3AnnPer)}/yr at 30% max`;
 
-async function pickNudge(choice){
-  document.getElementById("nudgeModal").classList.remove("show");
-  try{ await fetch(`${API}/nudge/${CID}`, {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({choice})}); }catch(e){}
-  document.getElementById("metaNudge").textContent = "NUDGE: " + choice.toUpperCase();
-}
-document.getElementById("nudgeModal").addEventListener("click", e=>{
-  if(e.target.id==="nudgeModal") pickNudge("Quarterly");
-});
+	  let lhtml = `<div class="yrow head"><span>Status</span><span>EE share</span><span class="amt">EE / mo</span><span class="amt hide-sm">EE / yr</span></div>`;
+	  lhtml += `<div class="yrow on"><span>In WTW</span><span>0%</span><span class="amt hi">$0</span><span class="amt hide-sm">$0</span></div>`;
+	  ;[
+	    {lab:"Out · Y1", p:0.10},
+	    {lab:"Out · Y2", p:0.20},
+	    {lab:"Out · Y3+", p:0.30},
+	  ].forEach(r=>{
+	    const mo = eo * r.p;
+	    lhtml += `<div class="yrow"><span>${r.lab}</span><span>${Math.round(r.p*100)}%</span><span class="amt">${FMT(mo)}</span><span class="amt hide-sm">${FMT(mo*12)}</span></div>`;
+	  });
+	  // roster impact row
+	  lhtml += `<div class="yrow head"><span>Roster</span><span>Count</span><span class="amt">Y1 sit $ / mo</span><span class="amt hide-sm">Y3 sit $ / yr</span></div>`;
+	  lhtml += `<div class="yrow"><span>Participating</span><span>${inCount}</span><span class="amt hi">$0</span><span class="amt hide-sm">$0</span></div>`;
+	  lhtml += `<div class="yrow"><span>Sitting out</span><span>${outCount}</span><span class="amt">${FMT(sit[0]*outCount)}</span><span class="amt hide-sm">${FMT(y3AnnAllOut)}</span></div>`;
+	  document.getElementById("ladderTable").innerHTML = lhtml;
 
-load();
-</script>
+	  // note under reinvest
+	  const note = document.getElementById("reinvestNote");
+	  if(harvestChoice === "reinvest"){
+	    note.innerHTML = `<b>It funds the FUN.</b> Y${thisY.y} directs <b>${FMT(thisY.hwl)}</b> (${Math.round(thisY.pct*100)}%) into in-house white-label HWL. Back off 10 pts/yr to offset rate increases. Lane 01 fee stays separate. Recommendation, not seizure.`;
+	  } else if(harvestChoice === "pocket"){
+	    note.innerHTML = `<b>Pocket selected.</b> Recovered dollars stay with the business. Corridor ladder can still run on EO participation. Flip to <b>Reinvest</b> when you want waste to fund HWL.`;
+	  } else {
+	    note.innerHTML = `<b>Deploy selected.</b> Owner strategy outside HWL. Reinvest remains available any cycle after the board ticks.`;
+	  }
+	}
+
+	function render(d){
+	  document.getElementById("fCompany").textContent = d.company||"—";
+	  document.getElementById("fCarrier").textContent = d.carrier||"—";
+	  document.getElementById("fRenewal").textContent = d.renewalDate ? new Date(d.renewalDate).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "—";
+	  document.getElementById("fWaste").textContent = FMT(d.annualWaste);
+	  document.getElementById("metaClient").textContent = "CLIENT: " + d.cid;
+	  document.getElementById("metaNudge").textContent = "NUDGE: " + (d.nudge||"Quarterly").toUpperCase();
+
+	  const gray = d.status==="gray";
+	  document.getElementById("board").setAttribute("data-graybox", gray?"true":"false");
+	  const badge = document.getElementById("stateBadge");
+	  const act = document.getElementById("activateBlock");
+	  const exc = document.getElementById("exceptionBlock");
+	  const full= document.getElementById("fullBlock");
+	  act.classList.remove("show"); exc.classList.remove("show"); full.style.display="none";
+
+	  if(d.status==="exception"){
+	    exc.classList.add("show");
+	    document.getElementById("exceptionReason").textContent = d.exception?.reason||"";
+	    badge.textContent="HITL · 24-HOUR HOLD"; return;
+	  }
+	  if(d.status==="awaiting_statement"){
+	    act.classList.add("show"); badge.textContent="ACTIVATE · UPLOAD STATEMENT"; return;
+	  }
+	  if(d.status==="light" || d.status==="awaiting_wire"){
+	    location.href = `/room-101/?cid=${d.cid}`; return;
+	  }
+
+	  // FULL / GRAY
+	  full.style.display=""; badge.textContent = gray ? "FULL · GRAY (STATEMENT DUE)" : "FULL · LIT";
+	  const f = d.full||{};
+	  document.getElementById("tMonthly").textContent  = FMT(f.monthly);
+	  document.getElementById("tRealized").textContent = FMT(f.realizedToDate);
+	  document.getElementById("tRealizedSub").textContent = `${f.validated||0} of 12 months validated`;
+	  document.getElementById("tFee").textContent      = FMT(f.feeToDate);
+	  const pct = Math.min(100,(f.realizedToDate/d.annualWaste)*100)||0;
+	  document.getElementById("pbarFill").style.width = pct+"%";
+	  document.getElementById("pbPct").textContent = Math.round(pct)+"%";
+	  const above = Math.max(0, d.annualWaste-100000);
+	  document.getElementById("feeLogic").innerHTML =
+	    `$10,000 flat on first $100,000<br>+ 10% on ${FMT(above)} above $100,000 = ${FMT(above*0.10)}<br>Total fee ${FMT(f.totalFee)} · ${FMT(f.feePerMonth)}/mo in lockstep`;
+	  document.getElementById("fullClock").textContent = `Board lit — ${f.monthsLeft} months remaining`;
+
+	  // months table
+	  const cm = f.currentMonth||1;
+	  const validatedSet = new Set((f.months||[]).filter(m=>m.validated).map(m=>m.m));
+	  let html = `<div class="mrow head"><span>MO</span><span>Status</span><span class="amt">Savings</span><span class="amt fee-col">Fee (you keep 90%)</span><span class="st">Doc</span></div>`;
+	  for(let m=1;m<=12;m++){
+	    const has = validatedSet.has(m);
+	    const isTU = m===12;
+	    let sp, dp, sv="—", fe="—";
+	    if(has){ sp=`<span class="pill ok">Validated</span>`; dp=`<span class="pill ok">✓</span>`; sv=FMT(f.monthly); fe=FMT(f.feePerMonth); }
+	    else if(m<cm){ sp=`<span class="pill miss">Missing</span>`; dp=`<span class="pill miss">✗</span>`; }
+	    else if(m===cm){ sp=`<span class="pill pend">Due now</span>`; dp=`<span class="pill pend">•••</span>`; }
+	    else { sp=`<span class="pill pend">Upcoming</span>`; dp=`<span class="pill pend">—</span>`; }
+	    const tu = isTU?` <span class="pill tu">True-up</span>`:"";
+	    html += `<div class="mrow"><span class="mo">M${m}</span><span>${sp}${tu}</span><span class="amt save">${sv}</span><span class="amt fee fee-col">${fe}</span><span class="st">${dp}</span></div>`;
+	  }
+	  document.getElementById("monthsTable").innerHTML = html;
+	  document.getElementById("uploadFor").textContent = gray ? `Next required: Month ${cm} (overdue — board grayed)` : `Next required: Month ${cm}`;
+
+	  // reports
+	  const rl = document.getElementById("reportsList");
+	  const rb = document.getElementById("reportsBlock");
+	  if((d.reports||[]).length){
+	    rb.style.display="";
+	    rl.innerHTML = d.reports.map(r=>{
+	      const file = r.key.split("/").pop();
+	      const label = r.kind==="initial" ? "Initial Waste Report" : `Quarterly · ${r.quarter||""}`;
+	      return `<div class="rrow"><span class="rk">${label}</span><span class="rq">${r.at}</span><a href="${API}/report/${d.cid}/${file}" target="_blank">Open / print</a></div>`;
+	    }).join("");
+	  } else rb.style.display="none";
+	}
+
+	async function onUpload(e){
+	  const f = e.target.files[0]; if(!f) return;
+	  const fd = new FormData(); fd.append("statement", f);
+	  try{
+	    const r = await fetch(`${API}/upload/${CID}`, {method:"POST", body:fd});
+	    const d = await r.json();
+	    e.target.value="";
+	    await load();
+	    if(d.status==="exception"){ /* board now shows HITL */ }
+	  }catch(err){ alert("Upload failed — Victoria will follow up."); }
+	}
+
+	async function pickNudge(choice){
+	  document.getElementById("nudgeModal").classList.remove("show");
+	  try{ await fetch(`${API}/nudge/${CID}`, {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({choice})}); }catch(e){}
+	  document.getElementById("metaNudge").textContent = "NUDGE: " + choice.toUpperCase();
+	}
+	document.getElementById("nudgeModal").addEventListener("click", e=>{
+	  if(e.target.id==="nudgeModal") pickNudge("Quarterly");
+	});
+
+	load();
+	</script>
 </body>
 </html>
